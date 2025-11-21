@@ -1558,7 +1558,10 @@ L.Control.TrackList = L.Control.extend({
     },
 
     loadBalkanTracks: async function () {
-        const xhr = await fetch(`${config.balkanTracksUrl}`, {
+        const boundsString = this._map.getBounds().toBBoxString();
+        console.log('Loading with bounds: ' + boundsString);
+
+        const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {
             method: 'GET',
             responseType: 'json'
         });
