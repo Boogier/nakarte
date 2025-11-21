@@ -1558,17 +1558,23 @@ L.Control.TrackList = L.Control.extend({
     },
 
     loadBalkanTracks: async function () {
-        const newTrackSegments = [];
-        const newTrackPoints = [];
-        const points = [];
+        const xhr = await fetch(`${config.balkanTracksUrl}`, {
+            method: 'GET',
+            responseType: 'json'
+        });
+        xhr.response['tracks'].forEach((tr) => {
+            const newTrackPoints = [];
 
-        points.push({ lat: 44.86, lng: 20.36 });
-        points.push({ lat: 44.96, lng: 20.46 });
-        newTrackSegments.push(points);
+            const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
+            const segments = [];
+            segments.push(segment);
 
-        newTrackPoints.push({ lat: 44.89, lng: 20.39, name: 'Start' });
-
-        this.addTrack({ name: 'track 1', tracks: newTrackSegments, points: newTrackPoints });
+            this.addTrack({
+                name: tr.Name,
+                tracks: segments,
+                points: newTrackPoints
+            });
+        });
     },
 
     saveAllTracksToZipFile: async function () {

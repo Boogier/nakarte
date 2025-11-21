@@ -33,7 +33,7 @@ function captureBreadcrumb(message, data = {}) {
 }
 
 function logEvent(eventName, extra) {
-    console.write(eventName);
+    console.log(eventName);
 //    const url = 'https://nakarte.me/event';
 
 //    const data = {event: eventName.toString()};
