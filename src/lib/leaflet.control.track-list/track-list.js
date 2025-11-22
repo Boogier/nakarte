@@ -46,6 +46,8 @@ const TrackSegment = L.MeasuredLine.extend({
 });
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
+let currentBounds;
+
 // name: str
 // seen: Set[str]
 // return str[]
@@ -1557,8 +1559,17 @@ L.Control.TrackList = L.Control.extend({
         this.addTrack({ name: newTrackName, tracks: newTrackSegments, points: newTrackPoints });
     },
 
+    reloadBalkanTracks: async function () {
+        let newBounds = this._map.getBounds();
+        if (!currentBounds.contains(newBounds)) {
+            this.deleteAllTracks();
+            await this.loadBalkanTracks();
+        }
+    },
+
     loadBalkanTracks: async function () {
-        const boundsString = this._map.getBounds().toBBoxString();
+        currentBounds = this._map.getBounds();
+        const boundsString = currentBounds.toBBoxString();
         console.log('Loading with bounds: ' + boundsString);
 
         const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {

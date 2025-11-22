@@ -251,6 +251,9 @@ function setUp() { // eslint-disable-line complexity
     }
 
     tracklist.loadBalkanTracks();
+    map.on('moveend zoomend', () => {
+        tracklist.reloadBalkanTracks();
+    });
 
     if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
         tracklist.once('loadedTracksFromParam', () => {
