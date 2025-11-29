@@ -1,33 +1,32 @@
-import './ImagePopup.css';
+import './ThumbnailPopup.css';
 
-class ImagePopup {
+class ThumbnailPopup {
     constructor(url) {
         this.url = url;
     }
 
-    show(e) {
-        if (this._container) {
-            return;
-        }
-
+    show(e, point) {
         const container = this._container = document.createElement('div');
         document.body.appendChild(container);
-        container.className = 'image-popup';
+        container.className = 'hover-image-popup';
 
         const popupImg = document.createElement("img");
         popupImg.src = this.url;
         container.appendChild(popupImg);
-        container.classList.add('show');
+        container.style.display = "block"
         
         window.addEventListener('keydown', this.onKeyDown, true);
         window.addEventListener('mousedown', this.onMouseDown, true);
         window.addEventListener('touchstart', this.onMouseDown, true);
+
+        this.setPosition(point.x, point.y);
     }
 
     hide() {
         if (!this._container) {
             return;
         }
+
         document.body.removeChild(this._container);
         this._container = null;
 
@@ -50,6 +49,28 @@ class ImagePopup {
 
         this.hide();
     };
+
+        setPosition(x, y) {
+        const window_width = window.innerWidth,
+            window_height = window.innerHeight,
+            menu_width = this._container.offsetWidth,
+            menu_height = this._container.offsetHeight;
+        if (x + menu_width >= window_width) {
+            x -= menu_width;
+            if (x < 0) {
+               x = 0;
+            }
+        }
+        if (y + menu_height >= window_height) {
+            y -= menu_height;
+            if (y < 0) {
+                y = 0;
+            }
+        }
+        this._container.style.left = `${x}px`;
+        this._container.style.top = `${y}px`;
+    }
+
 }
 
-export default ImagePopup;
+export default ThumbnailPopup;

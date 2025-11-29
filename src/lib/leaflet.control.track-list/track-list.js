@@ -2,6 +2,7 @@ import L from 'leaflet';
 import ko from 'knockout';
 import Contextmenu from '~/lib/contextmenu';
 import ImagePopup from '~/lib/ImagePopup';
+import ThumbnailPopup from '~/lib/ThumbnailPopup';
 import '~/lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from '~/lib/file-read';
@@ -1444,6 +1445,7 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerClick: function(e) {
             new ImagePopup(e.marker.fullsize).show(e);
+
             // new Contextmenu([
             //         {text: e.marker.label, header: true},
             //         '-',
@@ -1455,12 +1457,25 @@ L.Control.TrackList = L.Control.extend({
             // ).show(e);
         },
 
+        _currentImagePopup: null,
+
         onMarkerEnter: function(e) {
             e.marker._parentTrack.hover(true);
+            
+            // marker’s position → convert to screen pixel coordinates
+            const point = this._map.latLngToContainerPoint(e.marker.latlng);
+
+            this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail)
+            this._currentImagePopup.show(e, point);
         },
 
         onMarkerLeave: function(e) {
             e.marker._parentTrack.hover(false);
+
+            if (this._currentImagePopup) {
+                this._currentImagePopup.hide();
+                this._currentImagePopup = null;
+            }
         },
 
         removePoint: function(marker) {

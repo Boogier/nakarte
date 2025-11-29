@@ -1,0 +1,15 @@
+.hover-image-popup {
+  position: fixed;
+  display: none;
+  pointer-events: none;      /* Not modal: mouse clicks pass through */
+  z-index: 999999;
+}
+
+.hover-image-popup img {
+  max-width: 300px;
+  max-height: 300px;
+  border: 1px solid #aaa;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
