@@ -1595,30 +1595,35 @@ L.Control.TrackList = L.Control.extend({
     },
 
     loadBalkanTracks: async function () {
-        currentBounds = this._map.getBounds();
-        const boundsString = currentBounds.toBBoxString();
-        console.log('Loading with bounds: ' + boundsString);
+        this.readingFiles(this.readingFiles() + 1);
+        try {
+            currentBounds = this._map.getBounds();
+            const boundsString = currentBounds.toBBoxString();
+            console.log('Loading with bounds: ' + boundsString);
 
-        const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {
-            method: 'GET',
-            responseType: 'json'
-        });
-        xhr.response['tracks'].forEach((tr) => {
-            let photos = [];
-            if (tr.Photos){
-                 photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
-            }
-
-            const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
-            const segments = [];
-            segments.push(segment);
-
-            this.addTrack({
-                name: tr.Name,
-                tracks: segments,
-                points: photos
+            const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {
+                method: 'GET',
+                responseType: 'json'
             });
-        });
+            xhr.response['tracks'].forEach((tr) => {
+                let photos = [];
+                if (tr.Photos){
+                     photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
+                }
+
+                const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
+                const segments = [];
+                segments.push(segment);
+
+                this.addTrack({
+                    name: tr.Name,
+                    tracks: segments,
+                    points: photos
+                });
+            });
+        } finally {
+            this.readingFiles(this.readingFiles() - 1);
+        }
     },
 
     saveAllTracksToZipFile: async function () {
