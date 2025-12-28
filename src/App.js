@@ -251,7 +251,7 @@ function setUp() { // eslint-disable-line complexity
         })();
     }
 
-    tracklist.loadBalkanTracks();
+    tracklist.reloadBalkanTracks();
     const handleBoundsChanged = debounce(() => {
         tracklist.reloadBalkanTracks();
     }, 300);

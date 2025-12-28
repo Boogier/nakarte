@@ -49,6 +49,7 @@ const TrackSegment = L.MeasuredLine.extend({
 TrackSegment.mergeOptions(L.Polyline.EditMixinOptions);
 
 let currentBounds;
+let currentTolerance;
 
 // name: str
 // seen: Set[str]
@@ -1588,17 +1589,25 @@ L.Control.TrackList = L.Control.extend({
 
     reloadBalkanTracks: async function () {
         let newBounds = this._map.getBounds();
-        if (!currentBounds.contains(newBounds)) {
-            this.deleteAllTracks();
-            await this.loadBalkanTracks();
+        const diagonalMeters = newBounds.getNorthEast().distanceTo(newBounds.getSouthWest());
+        let reduceTolerance = diagonalMeters / 1000;
+        if (reduceTolerance < 50) {
+            reduceTolerance = 0;
+        }
+
+        if (!currentBounds || (!currentBounds.contains(newBounds)) || (reduceTolerance * 3 < currentTolerance)) {
+            await this.loadBalkanTracks(newBounds, reduceTolerance);
         }
     },
 
-    loadBalkanTracks: async function () {
+    loadBalkanTracks: async function (bounds, tolerance) {
         this.readingFiles(this.readingFiles() + 1);
         try {
-            currentBounds = this._map.getBounds();
-            const boundsString = currentBounds.toBBoxString();
+            this.deleteAllTracks();
+            currentBounds = bounds;
+            currentTolerance = tolerance;
+
+            const boundsString = currentBounds.toBBoxString() + ',' + currentTolerance;
             console.log('Loading with bounds: ' + boundsString);
 
             const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {
