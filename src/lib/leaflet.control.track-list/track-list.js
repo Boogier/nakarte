@@ -1340,17 +1340,14 @@ L.Control.TrackList = L.Control.extend({
         addTrack: function(geodata) {
             var color;
             color = geodata.color;
-            if (!color) {
-                if (geodata.name == "Region bounds"){
-                    color = this.colors.length - 1;
-                }
-                else {
-                    color = 0;
-                }
-            }
-            // if (!(color >= 0 && color < this.colors.length)) {
-            //     color = this._lastTrackColor;
-            //     this._lastTrackColor = (this._lastTrackColor + 1) % this.colors.length;
+            // if (!color) {
+            //     if (geodata.name == "Region bounds"){
+            //         color = this.colors.length - 1;
+            //     }
+            //     else {
+            //         color = this._lastTrackColor;
+            //         this._lastTrackColor = (this._lastTrackColor + 1) % (this.colors.length - 1); // exclude last color (used for region bounds)
+            //     }
             // }
             var track = {
                 name: ko.observable(geodata.name),
@@ -1607,10 +1604,10 @@ L.Control.TrackList = L.Control.extend({
             currentBounds = bounds;
             currentTolerance = tolerance;
 
-            const boundsString = currentBounds.toBBoxString() + ',' + currentTolerance;
-            console.log('Loading with bounds: ' + boundsString);
+            const paramString = currentBounds.toBBoxString() + ',' + currentTolerance + ',' + (TRACKLIST_TRACK_COLORS.length);
+            console.log('Loading with bounds: ' + paramString);
 
-            const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${boundsString}`, {
+            const xhr = await fetch(`${config.balkanTracksUrl}?bounds=${paramString}`, {
                 method: 'GET',
                 responseType: 'json'
             });
@@ -1627,7 +1624,8 @@ L.Control.TrackList = L.Control.extend({
                 this.addTrack({
                     name: tr.Name,
                     tracks: segments,
-                    points: photos
+                    points: photos,
+                    color: tr.Color
                 });
             });
         } finally {
