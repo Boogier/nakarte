@@ -57,25 +57,27 @@ class ThumbnailPopup {
     }
 
     setPosition(x, y) {
-        const window_width = window.innerWidth;
-        const window_height = window.innerHeight;
-        const menu_width = this._container.offsetWidth;
-        const menu_height = this._container.offsetHeight;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const menuWidth = this._container.offsetWidth;
+        const menuHeight = this._container.offsetHeight;
+        let posX = x;
+        let posY = y;
 
-        if (x + menu_width >= window_width) {
-            x -= menu_width;
-            if (x < 0) {
-                x = 0;
+        if (posX + menuWidth >= windowWidth) {
+            posX -= menuWidth;
+            if (posX < 0) {
+                posX = 0;
             }
         }
-        if (y + menu_height >= window_height) {
-            y -= menu_height;
-            if (y < 0) {
-                y = 0;
+        if (posY + menuHeight >= windowHeight) {
+            posY -= menuHeight;
+            if (posY < 0) {
+                posY = 0;
             }
         }
-        this._container.style.left = `${x}px`;
-        this._container.style.top = `${y}px`;
+        this._container.style.left = `${posX}px`;
+        this._container.style.top = `${posY}px`;
     }
 }
 
