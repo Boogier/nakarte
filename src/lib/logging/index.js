@@ -4,7 +4,7 @@ function randId() {
     return Math.random().toString(36).substring(2, 13);
 }
 
-const sessionId = randId();
+//const sessionId = randId();
 
 function captureMessage(msg, extra = {}) {
     extra.url = window.location.toString();
@@ -34,6 +34,7 @@ function captureBreadcrumb(message, data = {}) {
 
 function logEvent(eventName, extra) {
     console.log(eventName);
+    console.log(extra);
 //    const url = 'https://nakarte.me/event';
 
 //    const data = {event: eventName.toString()};

@@ -1450,7 +1450,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerClick: function(e) {
-            new ImagePopup(e.marker.fullsize).show(e);
+            new ImagePopup(e.marker.fullsize).show();
 
             // new Contextmenu([
             //         {text: e.marker.label, header: true},
@@ -1467,11 +1467,11 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerEnter: function(e) {
             e.marker._parentTrack.hover(true);
-            
+
             // marker’s position → convert to screen pixel coordinates
             const point = this._map.latLngToContainerPoint(e.marker.latlng);
 
-            this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail)
+            this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail);
             this._currentImagePopup.show(e, point);
         },
 
@@ -1613,7 +1613,7 @@ L.Control.TrackList = L.Control.extend({
             });
             xhr.response['tracks'].forEach((tr) => {
                 let photos = [];
-                if (tr.Photos){
+                if (tr.Photos) {
                      photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
                 }
 

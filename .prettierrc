@@ -6,6 +6,6 @@
     "trailingComma": "es5",
     "bracketSpacing": false,
     "arrowParens": "always",
-    "endOfLine": "lf",
+    "endOfLine": "auto",
     "overrides": []
 }

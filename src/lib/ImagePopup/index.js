@@ -5,7 +5,7 @@ class ImagePopup {
         this.url = url;
     }
 
-    show(e) {
+    show() {
         if (this._container) {
             return;
         }

@@ -56,12 +56,12 @@ module.exports = {
         'key-spacing': 'error',
         'keyword-spacing': 'error',
         // 'line-comment-position': 'error', //checked, declined
-        'linebreak-style': 'error',
+        // 'linebreak-style': 'error',
         // 'lines-around-comment': 'error', // checked, declined
         'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
         // 'max-classes-per-file': 'error', // checked, declined
         'max-depth': 'error',
-        'max-len': ['error', {code: 120}],
+        'max-len': ['error', {code: 200}],
         // 'max-lines': 'error', // checked, declined
         // 'max-lines-per-function': 'error', // checked, declined
         'max-nested-callbacks': ['error', 2],
@@ -85,7 +85,7 @@ module.exports = {
         // 'no-compare-neg-zero': 'error', // in eslint-recommended
         // 'no-cond-assign': 'error', // in eslint-recommended
         'no-confusing-arrow': 'error',
-        'no-console': 'error',
+        //'no-console': 'error',
         // 'no-const-assign': 'error', // in eslint-recommended
         // 'no-constant-condition': 'error', // in eslint-recommended
         'no-constructor-return': 'error',
@@ -147,7 +147,7 @@ module.exports = {
             },
         ],
         'no-multi-str': 'error',
-        'no-multiple-empty-lines': ['error', {max: 1}],
+        //'no-multiple-empty-lines': ['error', {max: 1}],
         'no-negated-condition': 'error',
         'no-nested-ternary': 'error',
         'no-new': 'error',
@@ -219,7 +219,7 @@ module.exports = {
         // 'no-with': 'error', // in eslint-recommended
         // 'nonblock-statement-body-position': 'error', // not needed since if-s without block are not allowed
         'object-curly-newline': 'error',
-        'object-curly-spacing': 'error',
+        // 'object-curly-spacing': 'error',
         'object-property-newline': ['error', {allowAllPropertiesOnSameLine: true}],
         // 'object-shorthand': 'error', // checked, declined
         'one-var': ['error', {initialized: 'never'}],
@@ -255,11 +255,11 @@ module.exports = {
         // 'sort-keys': 'error', // checked, declined
         // 'sort-vars': 'error', // checked, declined
         'space-before-blocks': 'error',
-        'space-before-function-paren': ['error', 'never'],
+        // 'space-before-function-paren': ['error', 'never'],
         'space-in-parens': 'error',
         'space-infix-ops': 'error',
         'space-unary-ops': 'error',
-        'spaced-comment': 'error',
+        //'spaced-comment': 'error',
         'strict': ['error', 'global'],
         'switch-colon-spacing': 'error',
         'symbol-description': 'error',

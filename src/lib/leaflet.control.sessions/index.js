@@ -291,7 +291,7 @@ const SessionsControl = L.Control.extend({
         //const trackNames = tracks.map((track) => track.name());
         //const tracksSerialized = this.trackListControl.serializeTracks(tracks);
         //session.saveState({hash, tracks: tracksSerialized, trackNames});
-        session.saveState({ hash });
+        session.saveState({hash});
     },
 
     loadSession: async function () {
