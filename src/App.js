@@ -33,7 +33,7 @@ import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
 import * as logging from '~/lib/logging';
 import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
-import {SearchControl} from '~/lib/leaflet.control.search';
+//import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
 import '~/vendored/mapbbcode/FunctionButton';
 import Contextmenu from '~/lib/contextmenu';
@@ -100,21 +100,21 @@ function setUp() { // eslint-disable-line complexity
 
     new ZoomDisplay().addTo(map);
 
-    const searchOptions = {
-        position: 'topleft',
-        stackHorizontally: true,
-        maxMapWidthToMinimize: 620,
-    };
-    if (minimizeControls.search === minimizeStateMinimized) {
-        searchOptions.maxMapHeightToMinimize = Infinity;
-        searchOptions.maxMapWidthToMinimize = Infinity;
-    } else if (minimizeControls.search === minimizeStateExpanded) {
-        searchOptions.maxMapHeightToMinimize = 0;
-        searchOptions.maxMapWidthToMinimize = 0;
-    }
-    const searchControl = new SearchControl(searchOptions)
-        .addTo(map)
-        .enableHashState('q');
+    // const searchOptions = {
+    //     position: 'topleft',
+    //     stackHorizontally: true,
+    //     maxMapWidthToMinimize: 620,
+    // };
+    // if (minimizeControls.search === minimizeStateMinimized) {
+    //     searchOptions.maxMapHeightToMinimize = Infinity;
+    //     searchOptions.maxMapWidthToMinimize = Infinity;
+    // } else if (minimizeControls.search === minimizeStateExpanded) {
+    //     searchOptions.maxMapHeightToMinimize = 0;
+    //     searchOptions.maxMapWidthToMinimize = 0;
+    // }
+    // const searchControl = new SearchControl(searchOptions)
+    //     .addTo(map)
+    //     .enableHashState('q');
     map.getPlacemarkHashStateInterface().enableHashState('r');
 
     new L.Control.Scale({
@@ -424,24 +424,24 @@ function setUp() { // eslint-disable-line complexity
         });
     });
 
-    searchControl.on('resultreceived', function(e) {
-        logging.logEvent('SearchProviderSelected', {
-            provider: e.provider,
-            query: e.query,
-        });
-        if (e.provider === 'Links' && e.result.error) {
-            logging.logEvent('SearchLinkError', {
-                query: e.query,
-                result: e.result,
-            });
-        }
-        if (e.provider === 'Coordinates') {
-            logging.logEvent('SearchCoordinates', {
-                query: e.query,
-                result: e.result,
-            });
-        }
-    });
+    // searchControl.on('resultreceived', function(e) {
+    //     logging.logEvent('SearchProviderSelected', {
+    //         provider: e.provider,
+    //         query: e.query,
+    //     });
+    //     if (e.provider === 'Links' && e.result.error) {
+    //         logging.logEvent('SearchLinkError', {
+    //             query: e.query,
+    //             result: e.result,
+    //         });
+    //     }
+    //     if (e.provider === 'Coordinates') {
+    //         logging.logEvent('SearchCoordinates', {
+    //             query: e.query,
+    //             result: e.result,
+    //         });
+    //     }
+    // });
 
     logging.logEvent('start', startInfo);
     logUsedMaps();
