@@ -2,15 +2,15 @@ import secrets from './secrets';
 
 const config = {
     caption: `
-        <a href="https://docs.nakarte.me">Documentation</a> |
-        <a href="https://about.nakarte.me">News</a> |
-        <a href="mailto:nakarte@nakarte.me" target="_self">nakarte@nakarte.me</a> |
-        <a href="https://about.nakarte.me/p/blog-page_29.html">Donate</a>`,
+        <a href="about.html" target="_self">About</a> |
+        <a href="https://t.me/boogier">Contact</a> |
+        <a href="donate.html" target="_self">Donate</a>`,
     defaultLocation: [44.50, 20.31],
     defaultZoom: 9,
     googleApiUrl: `https://maps.googleapis.com/maps/api/js?v=3&key=${secrets.google}`,
     westraDataBaseUrl: 'https://nakarte.me/westraPasses/',
-    CORSProxyUrl: 'https://proxy.nakarte.me/',
+    //CORSProxyUrl: 'https://boogier-001-site1.rtempurl.com/api/proxy?url=',
+    CORSProxyUrl: 'http://localhost/api/proxy/',
     elevationsServer: 'https://elevation.nakarte.me/',
     wikimediaCommonsCoverageUrl: 'https://tiles.nakarte.me/wikimedia_commons_images/{z}/{x}/{y}',
     geocachingSuUrl: 'https://nakarte.me/geocachingSu/geocaching_su2.json',

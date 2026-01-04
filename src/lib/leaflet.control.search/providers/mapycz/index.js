@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-//import {urlViaCorsProxy} from '~/lib/CORSProxy';
+import {urlViaCorsProxy} from '~/lib/CORSProxy';
 import * as logging from '~/lib/logging';
 import {fetch} from '~/lib/xhr-promise';
 
@@ -14,8 +14,7 @@ const MapyCzProvider = BaseProvider.extend({
     name: 'Mapy.cz',
 
     options: {
-        //apiUrl: urlViaCorsProxy('https://pro.mapy.cz/suggest/'),
-        apiUrl: 'https://pro.mapy.cz/suggest/',
+        apiUrl: urlViaCorsProxy('https://pro.mapy.cz/suggest/'),
         attribution: {
             text: 'Mapy.cz',
             url: 'https://mapy.cz',

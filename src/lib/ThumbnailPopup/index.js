@@ -28,11 +28,10 @@ class ThumbnailPopup {
         if (popupImg.complete) {
             // Position immediately in case image is cached
             this.setPosition(point.x, point.y);
-        }
-        else {
+        } else {
             // Wait for image to load before positioning so dimensions are correct
             popupImg.onload = () => {
-            this.setPosition(point.x, point.y);
+                this.setPosition(point.x, point.y);
             };
         }
     }
