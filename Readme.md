@@ -1,13 +1,11 @@
-[![tests status](https://github.com/wladich/nakarte/workflows/check/badge.svg)](https://github.com/wladich/nakarte/actions?query=workflow%3Atest)
-
 Source code of Run-Balkan web-site
 
 Install locally for development
 
 ```bash
-git clone https://github.com/Boogier/nakarte.git
-cd nakarte
-yarn
+git clone https://github.com/Boogier/RunBalkan.git
+cd RunBalkan
+npm install
 ```
 
 Create a dummy `secrets.js` file:
