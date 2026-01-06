@@ -1641,6 +1641,7 @@ L.Control.TrackList = L.Control.extend({
                 segments.push(segment);
 
                 this.addTrack({
+                    id: tr.Id,
                     name: tr.Name,
                     descr: tr.Descr,
                     tracks: segments,
