@@ -1016,7 +1016,7 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('nodeschanged', this.onTrackSegmentNodesChanged.bind(this, track, polyline));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
-            polyline.on('mouseover', () => this.onTrackMouseEnter(polyline));
+            polyline.on('mouseover', (e) => this.onTrackMouseEnter(polyline, e));
             polyline.on('mouseout', () => this.onTrackMouseLeave(polyline));
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
@@ -1273,7 +1273,7 @@ L.Control.TrackList = L.Control.extend({
 
         hoveredTrack: null,
 
-        bindTooltip: function(polyline) {
+        bindTooltip: function(polyline, latlng) {
             if (polyline.getTooltip()) {
                 return;
             }
@@ -1283,13 +1283,14 @@ L.Control.TrackList = L.Control.extend({
                 delay: 500,
                 permanent: true
             });
+            polyline.openTooltip(latlng);
         },
 
-        onTrackMouseEnter: function(polyline) {
+        onTrackMouseEnter: function(polyline, e) {
             polyline._parentTrack.hover(true);
             
             this.hoveredTrack = polyline._parentTrack;
-            this.bindTooltip(polyline);
+            this.bindTooltip(polyline, e.latlng);
         },
 
         onTrackMouseLeave: function(polyline) {
