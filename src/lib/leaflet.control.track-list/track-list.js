@@ -966,10 +966,6 @@ L.Control.TrackList = L.Control.extend({
 
         formatSegmentTooltip: function(segment) {
             const track = segment._parentTrack;
-            //const trackSegments = this.getTrackPolylines(track);
-            // const trackSegmentsCount = trackSegments.length;
-            // const segmentOrdinalNumber = trackSegments.indexOf(segment) + 1;
-
             // avoid slow calculation of self-intersections due to brute-force algorithm
             const MAX_POINTS_FOR_INTERSECTIONS_CALCULATION = 1000;
             // avoid noticeable errors in area calculations due to usage of approximate algorithm
@@ -1000,16 +996,12 @@ L.Control.TrackList = L.Control.extend({
                 segmentArea = this.formatArea(polygonArea(points));
             }
             const descr = track.descr();
-            //const r = descr.replaceAll('\n', '<br/>').replaceAll('\r', '');
             return `
                 <div style="width: max-content; max-width: 800px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
                     <b>${track.name()}</b>
                     ${descr ? '<br/><br/>' + descr.replaceAll('\n', '<br/>').replaceAll('\r', '') : ''}
                 </div>
             `;
-                // Segment number: ${segmentOrdinalNumber} / ${trackSegmentsCount}<br>
-                // Segment length: ${this.formatLength(segment.getLength())}<br>
-                // Segment area: ${segmentArea}
         },
 
         addTrackSegment: function(track, sourcePoints) {
@@ -1024,15 +1016,15 @@ L.Control.TrackList = L.Control.extend({
             polyline.on('nodeschanged', this.onTrackSegmentNodesChanged.bind(this, track, polyline));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
-            polyline.on('mouseover', () => this.onTrackMouseEnter(track));
-            polyline.on('mouseout', () => this.onTrackMouseLeave(track));
+            polyline.on('mouseover', () => this.onTrackMouseEnter(polyline));
+            polyline.on('mouseout', () => this.onTrackMouseLeave(polyline));
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
             polyline.on('drawend', this.onTrackSegmentDrawEnd, this);
 
-            if (!L.Browser.touch) {
-                polyline.bindTooltip(() => this.formatSegmentTooltip(polyline), {sticky: true, delay: 500});
-            }
+            // if (!L.Browser.touch) {
+            //     this.bindTooltip(polyline);
+            // }
 
             // polyline.on('editingstart', polyline.setMeasureTicksVisible.bind(polyline, false));
             // polyline.on('editingend', this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -1279,12 +1271,38 @@ L.Control.TrackList = L.Control.extend({
             this.startEditTrackSegement(line);
         },
 
-        onTrackMouseEnter: function(track) {
-            track.hover(true);
+        hoveredTrack: null,
+
+        bindTooltip: function(polyline) {
+            if (polyline.getTooltip()) {
+                return;
+            }
+
+            polyline.bindTooltip(() => this.formatSegmentTooltip(polyline), {
+                sticky: true,
+                delay: 500,
+                permanent: true
+            });
         },
 
-        onTrackMouseLeave: function(track) {
-            track.hover(false);
+        onTrackMouseEnter: function(polyline) {
+            polyline._parentTrack.hover(true);
+            
+            this.hoveredTrack = polyline._parentTrack;
+            this.bindTooltip(polyline);
+        },
+
+        onTrackMouseLeave: function(polyline) {
+            this.hoveredTrack = null;
+            setTimeout(() => {
+                if (this.hoveredTrack === polyline._parentTrack) {
+                    return;
+                }
+
+                polyline.unbindTooltip();
+            }, 2000);
+
+            polyline._parentTrack.hover(false);
         },
 
         onTrackEditStart: function(track) {

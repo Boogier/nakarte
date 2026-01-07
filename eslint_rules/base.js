@@ -189,7 +189,7 @@ module.exports = {
         // 'no-ternary': 'error', // checked, declined
         // 'no-this-before-super': 'error', // in eslint-recommended
         'no-throw-literal': 'error',
-        'no-trailing-spaces': 'error',
+        //'no-trailing-spaces': 'error',
         // 'no-undef': 'error', // in eslint-recommended
         'no-undef-init': 'error',
         // 'no-undefined': 'error', // not needed since no-global-assign and no-shadow-restricted-names are enabled
