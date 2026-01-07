@@ -996,9 +996,11 @@ L.Control.TrackList = L.Control.extend({
                 segmentArea = this.formatArea(polygonArea(points));
             }
             const descr = track.descr();
+            const externalId = track.externalId();
             return `
                 <div style="width: max-content; max-width: 800px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
-                    <b>${track.name()}</b>
+                    <b>${track.name()}</b><br/>
+                    <a href="https://strava.com/activities/${externalId}" target="_blank" rel="noopener noreferrer">Open in Strava</a>
                     ${descr ? '<br/><br/>' + descr.replaceAll('\n', '<br/>').replaceAll('\r', '') : ''}
                 </div>
             `;
@@ -1277,11 +1279,15 @@ L.Control.TrackList = L.Control.extend({
             if (polyline.getTooltip()) {
                 return;
             }
+            if (!polyline._parentTrack.externalId()) {
+                return;
+            }
 
             polyline.bindTooltip(() => this.formatSegmentTooltip(polyline), {
                 sticky: true,
                 delay: 500,
-                permanent: true
+                permanent: true,
+                interactive: true
             });
             polyline.openTooltip(latlng);
         },
@@ -1376,6 +1382,7 @@ L.Control.TrackList = L.Control.extend({
             //     }
             // }
             var track = {
+                externalId: ko.observable(geodata.externalId),
                 name: ko.observable(geodata.name),
                 descr: ko.observable(geodata.descr),
                 color: ko.observable(color),
@@ -1660,7 +1667,7 @@ L.Control.TrackList = L.Control.extend({
                 segments.push(segment);
 
                 this.addTrack({
-                    id: tr.Id,
+                    externalId: tr.ExternalId,
                     name: tr.Name,
                     descr: tr.Descr,
                     tracks: segments,
