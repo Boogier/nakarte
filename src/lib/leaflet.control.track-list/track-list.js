@@ -33,6 +33,7 @@ import {parseNktkSequence} from './lib/parsers/nktk';
 import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
 import {polygonArea} from '~/lib/polygon-area';
 import {polylineHasSelfIntersections} from '~/lib/polyline-selfintersects';
+import {loadingModal} from '~/lib/loadingModal';
 
 const TRACKLIST_TRACK_COLORS = ['#000', '#f0f', '#77f', '#f95', '#0ff', '#f77', '#00f', '#ee5'];
 
@@ -1666,6 +1667,7 @@ L.Control.TrackList = L.Control.extend({
 
     loadBalkanTracks: async function (bounds, tolerance, needToComplete) {
         this.readingFiles(this.readingFiles() + 1);
+        loadingModal.show('Loading...');
         try {
             currentBounds = bounds;
             currentTolerance = tolerance;
@@ -1711,6 +1713,7 @@ L.Control.TrackList = L.Control.extend({
                 });
             });
         } finally {
+            loadingModal.hide();
             this.readingFiles(this.readingFiles() - 1);
         }
     },
