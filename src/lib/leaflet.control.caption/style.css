@@ -11,6 +11,7 @@
 
 .leaflet-control-container .leaflet-control-caption a {
     text-decoration: none;
+    padding: 0 5px;
 }
 
 .leaflet-control-container .leaflet-control-caption a:hover {
