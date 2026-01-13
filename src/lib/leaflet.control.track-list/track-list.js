@@ -822,7 +822,9 @@ L.Control.TrackList = L.Control.extend({
         },
 
         // eslint-disable-next-line no-unused-vars
-        onTrackSegmentClick: function(e) {
+        onTrackSegmentClick: function(polyline, e) {
+            this.bindTooltip(polyline, e.latlng);
+            
             // prevend track editing
 
             // if (this.isPlacingPoint) {
@@ -1029,11 +1031,11 @@ L.Control.TrackList = L.Control.extend({
             );
             polyline._parentTrack = track;
             polyline.setMeasureTicksVisible(track.measureTicksShown());
-            polyline.on('click', this.onTrackSegmentClick, this);
+            polyline.on('click', (e) => this.onTrackSegmentClick(polyline, e));
             polyline.on('nodeschanged', this.onTrackSegmentNodesChanged.bind(this, track, polyline));
             polyline.on('noderightclick', this.onNodeRightClickShowMenu, this);
             polyline.on('segmentrightclick', this.onSegmentRightClickShowMenu, this);
-            polyline.on('mouseover', (e) => this.onTrackMouseEnter(polyline, e));
+            polyline.on('mouseover', () => this.onTrackMouseEnter(polyline));
             polyline.on('mouseout', () => this.onTrackMouseLeave(polyline));
             polyline.on('editstart', () => this.onTrackEditStart(track));
             polyline.on('editend', () => this.onTrackEditEnd(track));
@@ -1300,27 +1302,27 @@ L.Control.TrackList = L.Control.extend({
 
             polyline.bindTooltip(() => this.formatSegmentTooltip(polyline), {
                 sticky: true,
-                delay: 500,
                 permanent: true,
                 interactive: true
             });
             polyline.openTooltip(latlng);
         },
 
-        onTrackMouseEnter: function(polyline, e) {
+        onTrackMouseEnter: function(polyline) {
             polyline._parentTrack.hover(true);
             
             this.hoveredTrack = polyline._parentTrack;
-            this.bindTooltip(polyline, e.latlng);
         },
 
         onTrackMouseLeave: function(polyline) {
+            console.log('mouseleave');
             this.hoveredTrack = null;
             setTimeout(() => {
                 if (this.hoveredTrack === polyline._parentTrack) {
                     return;
                 }
 
+                console.log('remove tooltip');
                 polyline.unbindTooltip();
             }, 2000);
 
