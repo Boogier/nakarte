@@ -1677,7 +1677,6 @@ L.Control.TrackList = L.Control.extend({
  
         let reduceTolerance = this.getTolerance();
 
-
         if (!currentBounds || (!currentBounds.contains(newBounds)) || (reduceTolerance * 3 < currentTolerance)) {
             await this.loadBalkanTracks(newBounds, reduceTolerance, needToComplete);
         }
@@ -1700,8 +1699,26 @@ L.Control.TrackList = L.Control.extend({
             responseType: 'json'
         });
 
-        this.removeTrackById(trackId);
-        this.addTracksFromBalkanData(xhr.response['tracks'], 0);
+        const newTrackData = xhr.response['tracks'][0];
+        const existingTrack = this.getTrackById(trackId);
+        if (existingTrack) {
+            existingTrack.tolerance(0);
+
+            // Remove all existing segments from the track
+            const oldSegments = this.getTrackPolylines(existingTrack);
+            oldSegments.forEach((segment) => {
+                existingTrack.feature.removeLayer(segment);
+            });
+
+            // Add new segments
+            const newSegments = this.createTrackSegments(newTrackData);
+            newSegments.forEach((segmentPoints) => {
+                this.addTrackSegment(existingTrack, segmentPoints);
+            });
+
+            this.recalculateTrackLength(existingTrack);
+            this.notifyTracksChanged();
+        }
     },
 
     loadBalkanTracks: async function (bounds, tolerance, needToComplete) {
@@ -1744,9 +1761,7 @@ L.Control.TrackList = L.Control.extend({
                     photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
             }
 
-            const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
-            const segments = [];
-            segments.push(segment);
+            const segments = this.createTrackSegments(tr);
 
             this.addTrack({
                 id: tr.Id,
@@ -1759,6 +1774,13 @@ L.Control.TrackList = L.Control.extend({
                 tolerance: tolerance
             });
         });
+    },
+
+    createTrackSegments: function(tr) {
+        const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
+        const segments = [];
+        segments.push(segment);
+        return segments;
     },
 
     saveAllTracksToZipFile: async function () {
