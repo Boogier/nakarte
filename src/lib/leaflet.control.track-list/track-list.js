@@ -1315,14 +1315,12 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackMouseLeave: function(polyline) {
-            console.log('mouseleave');
             this.hoveredTrack = null;
             setTimeout(() => {
                 if (this.hoveredTrack === polyline._parentTrack) {
                     return;
                 }
 
-                console.log('remove tooltip');
                 polyline.unbindTooltip();
             }, 2000);
 
