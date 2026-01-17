@@ -1718,15 +1718,15 @@ L.Control.TrackList = L.Control.extend({
                 this.addTrackSegment(existingTrack, segmentPoints);
             });
 
-            if (newTrackData.Photos && newTrackData.Photos.length > 1 && existingTrack.markers.length === 1) {
-                // actual photos loaded instead of single
-                existingTrack.markers.forEach((marker) => this.removePoint(marker));
-                existingTrack.markers = [];
-                newTrackData.Photos.forEach((p) => {
-                    const marker = this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] });
-                    this._markerLayer.addMarker(marker);
-                });
-            }
+            // if (newTrackData.Photos && newTrackData.Photos.length > 1 && existingTrack.markers.length === 1) {
+            //     // actual photos loaded instead of single
+            //     existingTrack.markers.forEach((marker) => this.removePoint(marker));
+            //     existingTrack.markers = [];
+            //     newTrackData.Photos.forEach((p) => {
+            //         const marker = this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] });
+            //         this._markerLayer.addMarker(marker);
+            //     });
+            // }
             
             this.recalculateTrackLength(existingTrack);
             this.notifyTracksChanged();
@@ -1776,6 +1776,7 @@ L.Control.TrackList = L.Control.extend({
                     this.updateTrackSegments(existingTrack, tr, tolerance);
                 } else {
                     this.addTrackFromBalkanData(tr, tolerance);
+                    this.loadBalkanPhotos(tr);
                 }
             });
         } finally {
@@ -1783,11 +1784,15 @@ L.Control.TrackList = L.Control.extend({
         }
     },
 
+    loadBalkanPhotos: async function (tr) {
+
+    },
+
     addTrackFromBalkanData: function (tr, tolerance) {
-        let photos = [];
-        if (tr.Photos) {
-                photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
-        }
+        // let photos = [];
+        // if (tr.Photos) {
+        //         photos = tr.Photos.map((p) => ({ lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
+        // }
 
         const segments = this.createTrackSegments(tr);
 
@@ -1797,7 +1802,7 @@ L.Control.TrackList = L.Control.extend({
             name: tr.Name,
             descr: tr.Descr,
             tracks: segments,
-            points: photos,
+            // points: photos,
             color: tr.Color,
             tolerance: tolerance
         });
