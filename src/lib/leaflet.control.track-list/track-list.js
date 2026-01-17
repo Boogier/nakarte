@@ -184,10 +184,8 @@ L.Control.TrackList = L.Control.extend({
                  title="Load, edit and save tracks"></div>
                 <div class="leaflet-control-content">
                 <div class="header">
-                    <div class="hint"
-                     title="gpx kml Ozi geojson zip YandexMaps Strava Etomesto GarminConnect SportsTracker OSM Tracedetrail OpenStreetMap.ru Wikiloc">
-                        gpx kml Ozi geojson zip YandexMaps Strava
-                        <span class="formats-hint-more">&hellip;</span>
+                    <div title="Track list">
+                        Track list
                     </div>
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
