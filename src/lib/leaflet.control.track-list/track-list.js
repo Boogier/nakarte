@@ -1009,7 +1009,7 @@ L.Control.TrackList = L.Control.extend({
             const descr = track.descr();
             const externalId = track.externalId();
             return `
-                <div style="width: max-content; max-width: 800px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                <div style="width: max-content; max-width: min(800px, 80vw); word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
                     <b>${track.name()}</b><br/>
                     <img src="https://www.strava.com/favicon.ico" width="16" height="16" style="vertical-align: middle; margin-right: 4px;" alt="Strava">
                     <a href="https://strava.com/activities/${externalId}/overview" target="_blank" rel="noopener noreferrer">
