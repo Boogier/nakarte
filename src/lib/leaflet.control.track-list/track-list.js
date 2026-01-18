@@ -33,6 +33,7 @@ import {parseNktkSequence} from './lib/parsers/nktk';
 import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
 import {polygonArea} from '~/lib/polygon-area';
 import {polylineHasSelfIntersections} from '~/lib/polyline-selfintersects';
+import iconSave from '~/images/save.png';
 
 const TRACKLIST_TRACK_COLORS = ['#000', '#f0f', '#77f', '#f95', '#0ff', '#f77', '#00f', '#ee5'];
 
@@ -1011,10 +1012,17 @@ L.Control.TrackList = L.Control.extend({
             return `
                 <div style="width: max-content; max-width: min(800px, 80vw); word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
                     <b>${track.name()}</b><br/>
-                    <img src="https://www.strava.com/favicon.ico" width="16" height="16" style="vertical-align: middle; margin-right: 4px;" alt="Strava">
+                    <img src="https://www.strava.com/favicon.ico" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
                     <a href="https://strava.com/activities/${externalId}/overview" target="_blank" rel="noopener noreferrer">
                         Open in Strava
                     </a>
+                    
+                    <a href="#" class="track-save-as-gpx-link" data-track-id="${track.id}" title="Save as GPX">
+                    <img src="${iconSave}" style="vertical-align: middle; margin: 4px;">GPX</a>
+                    
+                    <a href="#" class="track-save-as-kml-link" data-track-id="${track.id}" title="Save as KML">
+                    <img src="${iconSave}" style="vertical-align: middle; margin: 4px;">KML</a>
+                    
                     ${descr ? '<br/><br/>' + descr.replaceAll('\n', '<br/>').replaceAll('\r', '') : ''}
                 </div>
             `;
@@ -1303,6 +1311,29 @@ L.Control.TrackList = L.Control.extend({
                 interactive: true
             });
             polyline.openTooltip(latlng);
+            
+            // Add click handler for "Save as" links
+            setTimeout(() => {
+                const tooltip = polyline.getTooltip();
+                if (tooltip && tooltip._container) {
+                    let saveAsLink = tooltip._container.querySelector('.track-save-as-gpx-link');
+                    if (saveAsLink) {
+                        saveAsLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const track = polyline._parentTrack;
+                            this.saveTrackAsFile(track, geoExporters.saveGpx, '.gpx');
+                        });
+                    }
+                    saveAsLink = tooltip._container.querySelector('.track-save-as-kml-link');
+                    if (saveAsLink) {
+                        saveAsLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const track = polyline._parentTrack;
+                            this.saveTrackAsFile(track, geoExporters.saveKml, '.kml');
+                        });
+                    }
+                }
+            }, 0);
         },
 
         onTrackMouseEnter: function(polyline) {
