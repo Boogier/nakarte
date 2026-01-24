@@ -1,5 +1,5 @@
 import BaseService from '../baseService';
-import {parseNktkSequence, parseTrackUrlData, parseNktkFragment} from '../../parsers/nktk';
+import {/*parseNktkSequence, */parseTrackUrlData, parseNktkFragment} from '../../parsers/nktk';
 import config from '~/config';
 import {parseHashParams} from '~/lib/leaflet.hashState/hashState';
 import loadFromUrl from '../../loadFromUrl';
@@ -67,20 +67,27 @@ class NakarteUrlLoader {
         return flattenArray(values.map(parseNktkFragment));
     }
 
-    async loadFromTextEncodedTrackId(values) {
-        const requests = values.map((trackId) =>
-            fetch(
-                `${config.tracksStorageServer}/track/${trackId}`,
-                {responseType: 'binarystring', withCredentials: true}
-            )
-        );
-        let responses;
-        try {
-            responses = await Promise.all(requests);
-        } catch (e) {
-            return [{name: 'Track from nakarte server', error: 'NETWORK'}];
-        }
-        return flattenArray(responses.map((r) => parseNktkSequence(r.responseBinaryText)));
+    async loadFromTextEncodedTrackId(competitionId) {
+        const xhr = await fetch(`${config.balkanTracksUrl}?competitionId=${competitionId}`, {
+            method: 'GET',
+            responseType: 'json'
+        });
+
+        return xhr.response;
+
+        // const requests = values.map((trackId) =>
+        //     fetch(
+        //         `${config.tracksStorageServer}/track/${trackId}`,
+        //         {responseType: 'binarystring', withCredentials: true}
+        //     )
+        // );
+        // let responses;
+        // try {
+        //     responses = await Promise.all(requests);
+        // } catch (e) {
+        //     return [{name: 'Track from nakarte server', error: 'NETWORK'}];
+        // }
+        // return flattenArray(responses.map((r) => parseNktkSequence(r.responseBinaryText)));
     }
 
     async loadFromJSON(values) {

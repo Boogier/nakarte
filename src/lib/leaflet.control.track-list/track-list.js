@@ -87,21 +87,6 @@ function getLinkToShare(keysToExclude, paramsToAdd) {
     return origin + pathname + '#' + decodeURIComponent(params.toString());
 }
 
-function unwrapLatLngsCrossing180Meridian(latngs) {
-    if (latngs.length === 0) {
-        return [];
-    }
-    const unwrapped = [latngs[0]];
-    let lastUnwrapped;
-    let prevUnwrapped = latngs[0];
-    for (let i = 1; i < latngs.length; i++) {
-        lastUnwrapped = wrapLatLngToTarget(latngs[i], prevUnwrapped);
-        unwrapped.push(lastUnwrapped);
-        prevUnwrapped = lastUnwrapped;
-    }
-    return unwrapped;
-}
-
 function getMetersPerPixel(map) {
     const bounds = map.getBounds();
     const diagonalMeters = bounds.getNorthEast().distanceTo(bounds.getSouthWest());
@@ -413,60 +398,28 @@ L.Control.TrackList = L.Control.extend({
             });
         },
 
-        addTracksFromGeodataArray: function(geodata_array, allowEmpty = false) {
-            let hasData = false;
-            var messages = [];
-            if (geodata_array.length === 0) {
-                messages.push('No tracks loaded');
-            }
-            geodata_array.forEach(function(geodata) {
-                    var data_empty = !((geodata.tracks && geodata.tracks.length) ||
-                        (geodata.points && geodata.points.length));
+        addTracksFromGeodataArray: function(geodata) {
+            geodata.tracks.forEach((tr) => {
+                this.addTrackFromBalkanData(tr, 0);
+            });
 
-                    if (!data_empty || allowEmpty) {
-                        if (geodata.tracks) {
-                            geodata.tracks = geodata.tracks.map(function(line) {
-                                    line = unwrapLatLngsCrossing180Meridian(line);
-                                    line = L.LineUtil.simplifyLatlngs(line, 360 / (1 << 24));
-                                    if (line.length === 1) {
-                                        line.push(line[0]);
-                                    }
-                                    return line;
-                                }
-                            );
-                        }
-                        hasData = true;
-                        this.addTrack(geodata);
-                    }
-                    var error_messages = {
-                        CORRUPT: 'File "{name}" is corrupt',
-                        UNSUPPORTED: 'File "{name}" has unsupported format or is badly corrupt',
-                        NETWORK: 'Could not download file from url "{name}"',
-                        INVALID_URL: '"{name}"  is not of supported URL type',
-                    };
-                    var message;
-                    if (geodata.error) {
-                        message = error_messages[geodata.error] || geodata.error;
-                        if (data_empty) {
-                            message += ', no data could be loaded';
-                        } else {
-                            message += ', loaded data can be invalid or incomplete';
-                        }
-                    } else if (data_empty && !allowEmpty) {
-                        message =
-                            'No data could be loaded from file "{name}". ' +
-                            'File is empty or contains only unsupported data.';
-                    }
-                    if (message) {
-                        message = L.Util.template(message, {name: geodata.name});
-                        messages.push(message);
-                    }
-                }.bind(this)
-            );
-            if (messages.length) {
-                notify(messages.join('\n'));
+            const markers = [];
+
+            const startTrack = this.getTrackById(0);
+            if (!startTrack) {
+                console.log('Track with id 0 not found.');
+                return false;
             }
-            return hasData;
+
+            markers.push(...geodata.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2] })));
+            // geodata.points.forEach((p) => {
+
+            //     markers.push(...p.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2] })));
+            // });
+
+            this._markerLayer.addMarkers(markers);
+
+            return true;
         },
 
         onTrackColorChanged: function(track) {
@@ -1504,9 +1457,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerIcon: function(marker) {
-            var symbol = 'marker',
-                colorInd = marker._parentTrack.color() + 1,
-                className = 'symbol-' + symbol + '-' + colorInd;
+            const className = marker.label === 'Start' ? 'symbol-start-point' : 'symbol-control-point';
             marker.icon = iconFromBackgroundImage('track-waypoint ' + className);
         },
 
@@ -1517,12 +1468,12 @@ L.Control.TrackList = L.Control.extend({
         addPoint: function(track, srcPoint) {
             var marker = {
                 latlng: L.latLng([srcPoint.lat, srcPoint.lng]),
-                _parentTrack: track,
+                _parentTrack: track
             };
-            this.setMarkerIcon(marker);
+
             this.setMarkerLabel(marker, srcPoint.name);
-            marker.thumbnail = srcPoint.thumbnail;
-            marker.fullsize = srcPoint.fullsize;
+            this.setMarkerIcon(marker);
+
             track.markers.push(marker);
             marker._parentTrack = track;
             return marker;
@@ -1698,68 +1649,68 @@ L.Control.TrackList = L.Control.extend({
     //     return reduceTolerance;
     // },
 
-    reloadBalkanTracks: async function (needToComplete) {
-        let newBounds = this._map.getBounds();
+    // reloadBalkanTracks: async function (needToComplete) {
+    //     let newBounds = this._map.getBounds();
  
-        let reduceTolerance = this.getTolerance();
+    //     let reduceTolerance = this.getTolerance();
 
-        if (!currentBounds || (!currentBounds.contains(newBounds)) || (reduceTolerance * 3 < currentTolerance)) {
-            await this.loadBalkanTracks(newBounds, reduceTolerance, needToComplete);
-        }
-    },
+    //     if (!currentBounds || (!currentBounds.contains(newBounds)) || (reduceTolerance * 3 < currentTolerance)) {
+    //         await this.loadBalkanTracks(newBounds, reduceTolerance, needToComplete);
+    //     }
+    // },
 
-    updateBalkanTrack: async function(trackId) {
-        const track = this.getTrackById(trackId);
-        if (!track) {
-            console.log('Track with id ' + trackId + ' not found, skipping update.');
-            return;
-        }
+    // updateBalkanTrack: async function(trackId) {
+    //     const track = this.getTrackById(trackId);
+    //     if (!track) {
+    //         console.log('Track with id ' + trackId + ' not found, skipping update.');
+    //         return;
+    //     }
 
-        if (track.tolerance() === 0) {
-            console.log('Track with id ' + trackId + ' has tolerance = 0, skipping update.');
-            return;
-        }
+    //     if (track.tolerance() === 0) {
+    //         console.log('Track with id ' + trackId + ' has tolerance = 0, skipping update.');
+    //         return;
+    //     }
 
-        const xhr = await fetch(`${config.balkanTracksUrl}?trackId=${trackId}`, {
-            method: 'GET',
-            responseType: 'json'
-        });
+    //     const xhr = await fetch(`${config.balkanTracksUrl}?trackId=${trackId}`, {
+    //         method: 'GET',
+    //         responseType: 'json'
+    //     });
 
-        const newTrackData = xhr.response['tracks'][0];
-        const existingTrack = this.getTrackById(trackId);
-        if (existingTrack) {
-            this.updateTrackSegments(existingTrack, newTrackData, 0);
-        }
-    },
+    //     const newTrackData = xhr.response['tracks'][0];
+    //     const existingTrack = this.getTrackById(trackId);
+    //     if (existingTrack) {
+    //         this.updateTrackSegments(existingTrack, newTrackData, 0);
+    //     }
+    // },
 
-    updateTrackSegments: function(existingTrack, newTrackData, tolerance) {
-            existingTrack.tolerance(tolerance);
+    // updateTrackSegments: function(existingTrack, newTrackData, tolerance) {
+    //         existingTrack.tolerance(tolerance);
 
-            // Remove all existing segments from the track
-            const oldSegments = this.getTrackPolylines(existingTrack);
-            oldSegments.forEach((segment) => {
-                existingTrack.feature.removeLayer(segment);
-            });
+    //         // Remove all existing segments from the track
+    //         const oldSegments = this.getTrackPolylines(existingTrack);
+    //         oldSegments.forEach((segment) => {
+    //             existingTrack.feature.removeLayer(segment);
+    //         });
 
-            // Add new segments
-            const newSegments = this.createTrackSegments(newTrackData);
-            newSegments.forEach((segmentPoints) => {
-                this.addTrackSegment(existingTrack, segmentPoints);
-            });
+    //         // Add new segments
+    //         const newSegments = this.createTrackSegments(newTrackData);
+    //         newSegments.forEach((segmentPoints) => {
+    //             this.addTrackSegment(existingTrack, segmentPoints);
+    //         });
 
-            // if (newTrackData.Photos && newTrackData.Photos.length > 1 && existingTrack.markers.length === 1) {
-            //     // actual photos loaded instead of single
-            //     existingTrack.markers.forEach((marker) => this.removePoint(marker));
-            //     existingTrack.markers = [];
-            //     newTrackData.Photos.forEach((p) => {
-            //         const marker = this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] });
-            //         this._markerLayer.addMarker(marker);
-            //     });
-            // }
+    //         // if (newTrackData.Photos && newTrackData.Photos.length > 1 && existingTrack.markers.length === 1) {
+    //         //     // actual photos loaded instead of single
+    //         //     existingTrack.markers.forEach((marker) => this.removePoint(marker));
+    //         //     existingTrack.markers = [];
+    //         //     newTrackData.Photos.forEach((p) => {
+    //         //         const marker = this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] });
+    //         //         this._markerLayer.addMarker(marker);
+    //         //     });
+    //         // }
             
-            this.recalculateTrackLength(existingTrack);
-            this.notifyTracksChanged();
-    },
+    //         this.recalculateTrackLength(existingTrack);
+    //         this.notifyTracksChanged();
+    // },
 
     getTracksToExclude: function (tolerance) {
         const exclude = this.tracks().filter((tr) => tr.tolerance() <= tolerance).map((tr) => tr.id());
@@ -1826,42 +1777,6 @@ L.Control.TrackList = L.Control.extend({
 
     loadBalkanPhotosPromise: Promise.resolve(),
 
-    loadBalkanPhotos: async function () {
-        if (this.photosToLoad.length === 0) {
-            //console.log('photosToLoad is empty.');
-            return;
-        }
-
-        const trackIds = this.photosToLoad.join(',');
-        this.photosToLoad = [];
-
-        //console.log('Loading photos for trackIds ' + trackIds);
-        const xhr = await fetch(`${config.balkanPhotosUrl}?trackIds=${trackIds}`, {
-            method: 'GET',
-            responseType: 'json'
-        });
-
-        if (xhr.status !== 200) {
-            console.log('Error loading photos for trackIds ' + trackIds + ': ' + xhr.response.message);
-            return;
-        }
-
-        console.log('GetPhotos response size:', JSON.stringify(xhr.response).length);
-        const photos = xhr.responseJSON;
-        const markers = [];
-
-        photos.forEach((p) => {
-            const existingTrack = this.getTrackById(p.TrackId);
-            if (!existingTrack) {
-                console.log('Track with id ' + p.TrackId + ' not found.');
-                return;
-            }
-
-            markers.push(...p.Photos.map((p) => this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] })));
-        });
-
-        this._markerLayer.addMarkers(markers);
-    },
 
     addTrackFromBalkanData: function (tr, tolerance) {
         // let photos = [];

@@ -220,23 +220,12 @@
         1px -1px 1px #fff;
 }
 
-.track-waypoint.symbol-marker-1 {
-    background-image: url("images/marker_1.png");
+.track-waypoint.symbol-control-point {
+    background-image: url("images/control-point.png");
 }
-.track-waypoint.symbol-marker-2 {
-    background-image: url("images/marker_2.png");
-}
-.track-waypoint.symbol-marker-3 {
-    background-image: url("images/marker_3.png");
-}
-.track-waypoint.symbol-marker-4 {
-    background-image: url("images/marker_4.png");
-}
-.track-waypoint.symbol-marker-5 {
-    background-image: url("images/marker_5.png");
-}
-.track-waypoint.symbol-marker-6 {
-    background-image: url("images/marker_6.png");
+
+.track-waypoint.symbol-start-point {
+    background-image: url("images/start-point.png");
 }
 
 .leaflet-point-placing {

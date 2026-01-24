@@ -38,7 +38,7 @@ import '~/lib/leaflet.placemark';
 import '~/vendored/mapbbcode/FunctionButton';
 import Contextmenu from '~/lib/contextmenu';
 import iconMenu from './images/menu.png';
-import debounce from 'lodash/debounce';
+//import debounce from 'lodash/debounce';
 
 const locationErrorMessage = {
     0: 'Your browser does not support geolocation.',
@@ -252,21 +252,21 @@ function setUp() { // eslint-disable-line complexity
     }
 
     // Track the latest load operation to prevent parallel executions
-    let balkanTracksLoadId = 0;
-    function reloadBalkanTracksLatestOnly() {
-        const currentLoadId = ++balkanTracksLoadId;
+    // let balkanTracksLoadId = 0;
+    // function reloadBalkanTracksLatestOnly() {
+    //     const currentLoadId = ++balkanTracksLoadId;
 
-        tracklist.reloadBalkanTracks(
-            () => currentLoadId === balkanTracksLoadId
-        );
-    }
+    //     tracklist.reloadBalkanTracks(
+    //         () => currentLoadId === balkanTracksLoadId
+    //     );
+    // }
 
-    reloadBalkanTracksLatestOnly();
-    const handleBoundsChanged = debounce(() => {
-        reloadBalkanTracksLatestOnly();
-    }, 500);
+    // reloadBalkanTracksLatestOnly();
+    // const handleBoundsChanged = debounce(() => {
+    //     reloadBalkanTracksLatestOnly();
+    // }, 500);
 
-    map.on('moveend zoomend', handleBoundsChanged);
+    //map.on('moveend zoomend', handleBoundsChanged);
 
     if (hashState.hasKey('autoprofile') && hasTrackParamsInHash) {
         tracklist.once('loadedTracksFromParam', () => {
