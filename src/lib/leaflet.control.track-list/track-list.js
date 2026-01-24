@@ -31,8 +31,8 @@ import {splitLinesAt180Meridian} from "./lib/meridian180";
 import {ElevationProvider} from '~/lib/elevations';
 import {parseNktkSequence} from './lib/parsers/nktk';
 import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
-import {polygonArea} from '~/lib/polygon-area';
-import {polylineHasSelfIntersections} from '~/lib/polyline-selfintersects';
+//import {polygonArea} from '~/lib/polygon-area';
+//import {polylineHasSelfIntersections} from '~/lib/polyline-selfintersects';
 import iconSave from '~/images/save.png';
 
 const TRACKLIST_TRACK_COLORS = ['#000', '#f0f', '#77f', '#f95', '#0ff', '#f77', '#00f', '#ee5'];
@@ -680,7 +680,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         exportTrackAsFile: async function(track, exporter, extension, addElevations, allowEmpty) {
-            await this.updateBalkanTrack(track.id());
+            //await this.updateBalkanTrack(track.id());
             track = this.getTrackById(track.id());
 
             var lines = this.getTrackPolylines(track)
@@ -931,44 +931,40 @@ L.Control.TrackList = L.Control.extend({
 
         formatSegmentTooltip: function(segment) {
             const track = segment._parentTrack;
-            // avoid slow calculation of self-intersections due to brute-force algorithm
-            const MAX_POINTS_FOR_INTERSECTIONS_CALCULATION = 1000;
-            // avoid noticeable errors in area calculations due to usage of approximate algorithm
-            const MAX_EXTENT_WIDTH = 10;
-            const MAX_EXTENT_HEIGHT = 5;
+            // // avoid slow calculation of self-intersections due to brute-force algorithm
+            // const MAX_POINTS_FOR_INTERSECTIONS_CALCULATION = 1000;
+            // // avoid noticeable errors in area calculations due to usage of approximate algorithm
+            // const MAX_EXTENT_WIDTH = 10;
+            // const MAX_EXTENT_HEIGHT = 5;
 
-            let segmentArea;
-            let points = segment.getLatLngs();
-            if (points.length > 1 && points[0].equals(points.at(-1))) {
-                points = points.slice(0, -1);
-            }
-            if (points.length > MAX_POINTS_FOR_INTERSECTIONS_CALCULATION) {
-                segmentArea = '-- <span class="track-tooltip-area-calc-error">(too many points)</span>';
-            }
-            if (!segmentArea) {
-                const bounds = L.latLngBounds(points);
-                if (
-                    bounds.getEast() - bounds.getWest() > MAX_EXTENT_WIDTH ||
-                    bounds.getNorth() - bounds.getSouth() > MAX_EXTENT_HEIGHT
-                ) {
-                    segmentArea = '-- <span class="track-tooltip-area-calc-error">(too big extent)</span>';
-                }
-            }
-            if (!segmentArea && polylineHasSelfIntersections(points)) {
-                segmentArea = '-- <span class="track-tooltip-area-calc-error">(self-intersection)</span>';
-            }
-            if (!segmentArea) {
-                segmentArea = this.formatArea(polygonArea(points));
-            }
+            // let segmentArea;
+            // let points = segment.getLatLngs();
+            // if (points.length > 1 && points[0].equals(points.at(-1))) {
+            //     points = points.slice(0, -1);
+            // }
+            // if (points.length > MAX_POINTS_FOR_INTERSECTIONS_CALCULATION) {
+            //     segmentArea = '-- <span class="track-tooltip-area-calc-error">(too many points)</span>';
+            // }
+            // if (!segmentArea) {
+            //     const bounds = L.latLngBounds(points);
+            //     if (
+            //         bounds.getEast() - bounds.getWest() > MAX_EXTENT_WIDTH ||
+            //         bounds.getNorth() - bounds.getSouth() > MAX_EXTENT_HEIGHT
+            //     ) {
+            //         segmentArea = '-- <span class="track-tooltip-area-calc-error">(too big extent)</span>';
+            //     }
+            // }
+            // if (!segmentArea && polylineHasSelfIntersections(points)) {
+            //     segmentArea = '-- <span class="track-tooltip-area-calc-error">(self-intersection)</span>';
+            // }
+            // if (!segmentArea) {
+            //     segmentArea = this.formatArea(polygonArea(points));
+            // }
             const descr = track.descr();
-            const externalId = track.externalId();
+            // const externalId = track.externalId();
             return `
                 <div style="width: max-content; max-width: min(800px, 80vw); word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
                     <b>${track.name()}</b><br/>
-                    <img src="https://www.strava.com/favicon.ico" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
-                    <a href="https://strava.com/activities/${externalId}/overview" target="_blank" rel="noopener noreferrer">
-                        Open in Strava
-                    </a>
                     
                     <a href="#" class="track-save-as-gpx-link" data-track-id="${track.id}" title="Save as GPX">
                     <img src="${iconSave}" style="vertical-align: middle; margin: 4px;">GPX</a>
@@ -1252,9 +1248,6 @@ L.Control.TrackList = L.Control.extend({
 
         bindTooltip: function(polyline, latlng) {
             if (polyline.getTooltip()) {
-                return;
-            }
-            if (!polyline._parentTrack.externalId()) {
                 return;
             }
 
