@@ -1720,7 +1720,7 @@ L.Control.TrackList = L.Control.extend({
             return;
         }
 
-        const xhr = await fetch(`${config.balkanTracksUrl}?trackId=${trackId}`, {
+        const xhr = await fetch(`${config.balkanTracksUrl}&trackId=${trackId}`, {
             method: 'GET',
             responseType: 'json'
         });
@@ -1772,7 +1772,7 @@ L.Control.TrackList = L.Control.extend({
             currentBounds = bounds;
             currentTolerance = tolerance;
 
-            const paramString = `rect=${currentBounds.toBBoxString()}&tolerance=${currentTolerance}&colors=${TRACKLIST_TRACK_COLORS.length}&exclude=${this.getTracksToExclude(currentTolerance)}&tracksOnly=1`;
+            const paramString = `&rect=${currentBounds.toBBoxString()}&tolerance=${currentTolerance}&colors=${TRACKLIST_TRACK_COLORS.length}&exclude=${this.getTracksToExclude(currentTolerance)}`;
             console.log('Loading: ' + paramString);
 
             if (!needToComplete()) {
@@ -1780,7 +1780,7 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            const url = `${config.balkanTracksUrl}?${paramString}`;
+            const url = `${config.balkanTracksUrl}${paramString}`;
             const xhr = await fetch(url, {
                 method: 'GET',
                 responseType: 'json'
@@ -1884,10 +1884,33 @@ L.Control.TrackList = L.Control.extend({
     },
 
     createTrackSegments: function(tr) {
-        const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
+        //const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
+        const segment = this.parseWKTToSegment(tr.trackPoints);
         const segments = [];
         segments.push(segment);
         return segments;
+    },
+
+    parseWKTToSegment: function(wktString) {
+        // Parse WKT LINESTRING format: "LINESTRING(lon lat, lon lat, ...)"
+        if (!wktString || typeof wktString !== 'string') {
+            return [];
+        }
+
+        // Remove LINESTRING wrapper and extract coordinates
+        const coordsMatch = wktString.match(/LINESTRING\s*\((.+)\)/iu);
+        if (!coordsMatch) {
+            console.error('Invalid WKT format:', wktString);
+            return [];
+        }
+
+        const coordsString = coordsMatch[1];
+        const points = coordsString.split(',').map((pair) => {
+            const [lon, lat] = pair.trim().split(/\s+/u).map(Number);
+            return { lat, lng: lon };
+        });
+
+        return points;
     },
 
     saveAllTracksToZipFile: async function () {

@@ -1,5 +1,9 @@
 import secrets from './secrets';
 
+const balkanServerUrl = NODE_ENV === 'production' 
+        ? 'https://iorient.ru/'
+        : 'http://localhost:55971/';
+
 const config = {
     caption: `
         <a href="about.html" target="_self">About</a> |
@@ -20,8 +24,8 @@ const config = {
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
-    balkanTracksUrl: 'https://iorient.ru/runbalkan/GetTracks.aspx',
-    balkanPhotosUrl: 'https://iorient.ru/runbalkan/GetPhotos.aspx',
+    balkanTracksUrl: balkanServerUrl + 'runbalkan/GetTracks.aspx?wkt=1',
+    balkanPhotosUrl: balkanServerUrl + 'runbalkan/GetPhotos.aspx',
     ...secrets,
 };
 
