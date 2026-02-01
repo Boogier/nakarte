@@ -31,7 +31,7 @@ import {LocateControl} from '~/lib/leaflet.control.locate';
 import {notify} from '~/lib/notifications';
 import ZoomDisplay from '~/lib/leaflet.control.zoom-display';
 import * as logging from '~/lib/logging';
-import safeLocalStorage from '~/lib/safe-localstorage';
+//import safeLocalStorage from '~/lib/safe-localstorage';
 import {ExternalMaps} from '~/lib/leaflet.control.external-maps';
 //import {SearchControl} from '~/lib/leaflet.control.search';
 import '~/lib/leaflet.placemark';
@@ -56,11 +56,11 @@ function isInIframe() {
 }
 
 function setUp() { // eslint-disable-line complexity
-    const startInfo = {
-        href: window.location.href,
-        localStorageKeys: Object.keys(safeLocalStorage),
-        mobile: L.Browser.mobile,
-    };
+    // const startInfo = {
+    //     href: window.location.href,
+    //     localStorageKeys: Object.keys(safeLocalStorage),
+    //     mobile: L.Browser.mobile,
+    // };
     fixAll();
 
     function validateMinimizeState(state) {
@@ -443,7 +443,7 @@ function setUp() { // eslint-disable-line complexity
     //     }
     // });
 
-    logging.logEvent('start', startInfo);
+    //logging.logEvent('start', startInfo);
     logUsedMaps();
 }
 
