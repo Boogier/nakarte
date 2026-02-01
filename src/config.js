@@ -22,6 +22,7 @@ const config = {
     balkanTracksUrl: NODE_ENV === 'production' 
         ? 'https://iorient.ru/RunBalkan/GetIorientCompetitionTracks.aspx'
         : 'http://localhost:55971/runbalkan/GetIorientCompetitionTracks.aspx',
+    defaultTrackTolerance: 5,
     ...secrets,
 };
 

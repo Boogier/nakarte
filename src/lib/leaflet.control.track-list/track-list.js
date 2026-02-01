@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import ko from 'knockout';
+import wellknown from 'wellknown';
 import Contextmenu from '~/lib/contextmenu';
 //import ImagePopup from '~/lib/ImagePopup';
 //import ThumbnailPopup from '~/lib/ThumbnailPopup';
@@ -400,7 +401,7 @@ L.Control.TrackList = L.Control.extend({
 
         addTracksFromGeodataArray: function(geodata) {
             geodata.tracks.forEach((tr) => {
-                this.addTrackFromBalkanData(tr, 0);
+                this.addTrackFromBalkanData(tr, config.defaultTrackTolerance);
             });
 
             const markers = [];
@@ -464,7 +465,11 @@ L.Control.TrackList = L.Control.extend({
             const lines = this.getTrackPolylines(track);
             let length = 0;
             for (let line of lines) {
-                length += line.getLength();
+                try {
+                    length += line.getLength();
+                } catch (e) {
+                    console.error('Failed to calculate track length', e);
+                }
             }
             track.length(length);
         },
@@ -1804,10 +1809,52 @@ L.Control.TrackList = L.Control.extend({
         });
     },
 
-    createTrackSegments: function(tr) {
-        const segment = tr.trackPoints.map((pt) => ({ lat: pt[0], lng: pt[1] }));
-        const segments = [];
+    parseLineString: function(segments, coordinates) {
+        const segment = coordinates
+            .filter((coord) => coord !== undefined && coord !== null && coord.length >= 2)
+            .map((coord) => this.parsePoint(segments, coord));
         segments.push(segment);
+    },
+
+    parsePoint: function(segments, parsed) {
+        return L.latLng(parsed[1], parsed[0]);
+    },
+
+    parseMultiLineString: function(segments, parsed) {
+        for (const geom of parsed.coordinates) {
+            this.parseLineString(segments, geom);
+        }
+    },
+
+    parseGeometryCollection: function(segments, parsed) {
+        for (const geom of parsed.geometries) {
+            this.parseGeometry(segments, geom);
+        }
+    },
+
+    parseGeometry: function(segments, parsed) {
+        if (parsed.type === 'GeometryCollection') {
+            this.parseGeometryCollection(segments, parsed);
+        } else if (parsed.type === 'LineString') {
+            this.parseLineString(segments, parsed.coordinates);
+        } else if (parsed.type === 'MultiLineString') {
+            this.parseMultiLineString(segments, parsed);
+        } else if (parsed.type === 'Point') {
+            this.parsePoint(segments, parsed);
+        } else {
+            // todo: can be 
+            // - MultiPoint
+            // - Polygon
+            // - MultiPolygon
+            console.error('Unsupported track geometry type:', parsed.type);
+        }
+    },
+
+    createTrackSegments: function(tr) {
+        const parsed = wellknown.parse(tr.trackPoints);
+        const segments = [];
+        
+        this.parseGeometry(segments, parsed);
         return segments;
     },
 

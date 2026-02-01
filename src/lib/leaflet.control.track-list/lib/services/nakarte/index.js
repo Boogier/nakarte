@@ -68,10 +68,14 @@ class NakarteUrlLoader {
     }
 
     async loadFromTextEncodedTrackId(competitionId) {
-        const xhr = await fetch(`${config.balkanTracksUrl}?competitionId=${competitionId}`, {
+        const url = `${config.balkanTracksUrl}?competitionId=${competitionId}&tolerance=${config.defaultTrackTolerance}`;
+        //console.log('fetching ', url);
+        const xhr = await fetch(url, {
             method: 'GET',
             responseType: 'json'
         });
+
+        console.log('response size: ', JSON.stringify(xhr.response).length);
 
         return xhr.response;
 
