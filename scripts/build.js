@@ -13,13 +13,29 @@ const paths = require('../webpack/paths');
 const errorExitStatus = 1;
 
 function getVersionFromGit() {
-    const verCmd =
-        'echo -n ' +
-        '`date +%Y-%m-%d_%H:%M:%S`-' +
-        '`git rev-parse --abbrev-ref HEAD`-' +
-        '`git rev-parse --short HEAD`' +
-        '`git diff-index --quiet HEAD -- || echo -dirty`';
-    return execSync(verCmd).toString();
+    try {
+        // Get current date/time
+        const date = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, ':');
+        
+        // Get current branch
+        const branch = execSync('git rev-parse --abbrev-ref HEAD', {encoding: 'utf8'}).trim();
+        
+        // Get short commit hash
+        const commit = execSync('git rev-parse --short HEAD', {encoding: 'utf8'}).trim();
+        
+        // Check if working directory is dirty
+        let dirty = '';
+        try {
+            execSync('git diff-index --quiet HEAD --');
+        } catch (e) {
+            dirty = '-dirty';
+        }
+        
+        return `${date}-${branch}-${commit}${dirty}`;
+    } catch (e) {
+        console.warn('Failed to get version from git:', e.message);
+        return 'unknown';
+    }
 }
 
 // Input: /User/dan/app/build/static/js/main.82be8.js
