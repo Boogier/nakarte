@@ -400,6 +400,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         addTracksFromGeodataArray: function(geodata) {
+            this.deleteAllTracks();
             geodata.tracks.forEach((tr) => {
                 this.addTrackFromBalkanData(tr, config.defaultTrackTolerance);
             });
