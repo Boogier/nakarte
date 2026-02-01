@@ -101,12 +101,15 @@ const hashState = {
             }
         }
 
+        // Update state before firing callbacks so that if any callback triggers
+        // another updateState call, it will have the correct current state
+        this._state = newState;
+
         for (let [key, callback] of this._listeners) {
             if (key in changedKeys) {
                 callback(newState[key]);
             }
         }
-        this._state = newState;
     }
 };
 
