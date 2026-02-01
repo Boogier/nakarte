@@ -111,8 +111,8 @@ const hashState = {
 };
 
 function bindHashStateReadOnly(key, target, once, keepInState) {
-    function onChange() {
-        target(hashState.getState(key));
+    function onChange(values) {
+        target(values === undefined ? hashState.getState(key) : values);
         if (!keepInState) {
             hashState.updateState(key, null);
         }
