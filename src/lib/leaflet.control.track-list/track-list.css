@@ -199,11 +199,11 @@
 
 .track-waypoint {
     display: block;
-    width: 21px !important;
-    height: 21px !important;
+    width: 30px !important;
+    height: 30px !important;
     background-repeat: no-repeat;
-    margin-top: -21px !important;
-    margin-left: -10.5px !important;
+    margin-top: -15px !important;
+    margin-left: -15px !important;
     padding-left: 20px;
     padding-bottom: 15px;
     font-size: 10px;
