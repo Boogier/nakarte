@@ -1,8 +1,9 @@
 import './ThumbnailPopup.css';
 
 class ThumbnailPopup {
-    constructor(url) {
+    constructor(url, photoCount = 0) {
         this.url = url;
+        this.photoCount = photoCount;
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
     }
@@ -19,6 +20,15 @@ class ThumbnailPopup {
         const popupImg = document.createElement('img');
         popupImg.src = this.url;
         this._container.appendChild(popupImg);
+
+        // Add badge if there are additional photos
+        if (this.photoCount > 1) {
+            const badge = document.createElement('div');
+            badge.className = 'hover-image-popup-badge';
+            badge.textContent = `${this.photoCount} photos`;
+            this._container.appendChild(badge);
+        }
+
         this._container.style.display = 'block';
 
         window.addEventListener('keydown', this.onKeyDown, true);

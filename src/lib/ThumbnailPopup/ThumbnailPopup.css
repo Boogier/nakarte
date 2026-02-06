@@ -13,3 +13,16 @@
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
+
+.hover-image-popup-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  pointer-events: none;
+}

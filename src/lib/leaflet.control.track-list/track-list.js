@@ -1531,11 +1531,11 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerClick: function(e) {
             // Find all markers at this location (within small radius)
-            const allMarkers = this._markerLayer.findAllMarkersFromMouseEvent(e);
+            const latlng = this._lastMarkerHoverLatLng ? this._lastMarkerHoverLatLng : e.latlng;
+            const allMarkers = this._markerLayer.findAllMarkersFromMouseEvent(latlng);
             
             // Collect all photo URLs from markers at this location
             const photoUrls = allMarkers
-                .filter(marker => marker.fullsize)
                 .map(marker => marker.fullsize);
             
             if (photoUrls.length > 0) {
@@ -1554,14 +1554,21 @@ L.Control.TrackList = L.Control.extend({
         },
 
         _currentImagePopup: null,
+        _lastMarkerHoverLatLng: null,
 
         onMarkerEnter: function(e) {
             e.marker._parentTrack.hover(true);
 
+            this._lastMarkerHoverLatLng = e.marker.latlng;
+
             // marker’s position → convert to screen pixel coordinates
             const point = this._map.latLngToContainerPoint(e.marker.latlng);
 
-            this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail);
+            // Find all markers at this location to show count
+            const allMarkers = this._markerLayer.findAllMarkersFromMouseEvent(e.marker.latlng);
+            const photoCount = allMarkers.length;
+
+            this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail, photoCount);
             this._currentImagePopup.show(e, point);
         },
 

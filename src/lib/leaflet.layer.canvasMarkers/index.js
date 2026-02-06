@@ -387,9 +387,9 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
             return marker;
         },
 
-        findAllMarkersFromMouseEvent: function(e) {
+        findAllMarkersFromMouseEvent: function(latlng) {
             const
-                p = this._map.project(e.latlng.wrap()),
+                p = this._map.project(latlng.wrap()),
                 searchRadius = 5, // pixels
                 regions = this._regions.search({
                     minX: p.x - searchRadius,
