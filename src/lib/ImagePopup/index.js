@@ -92,16 +92,12 @@ class ImagePopup {
     }
 
     showPrev() {
-        const newIndex = this.currentIndex > 0 
-            ? this.currentIndex - 1 
-            : this.urls.length - 1;
+        const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.urls.length - 1;
         this._showPhoto(newIndex);
     }
 
-    showNext(){
-        const newIndex = this.currentIndex < this.urls.length - 1 
-            ? this.currentIndex + 1 
-            : 0;
+    showNext() {
+        const newIndex = this.currentIndex < this.urls.length - 1 ? this.currentIndex + 1 : 0;
         this._showPhoto(newIndex);
     }
 

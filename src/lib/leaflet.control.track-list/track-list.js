@@ -1536,7 +1536,7 @@ L.Control.TrackList = L.Control.extend({
             
             // Collect all photo URLs from markers at this location
             const photoUrls = allMarkers
-                .map(marker => marker.fullsize);
+                .map((marker) => marker.fullsize);
             
             if (photoUrls.length > 0) {
                 new ImagePopup(photoUrls).show();

@@ -397,7 +397,7 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     maxX: p.x + searchRadius,
                     maxY: p.y + searchRadius
                 });
-            return regions.map(region => region.marker);
+            return regions.map((region) => region.marker);
         },
 
         onMouseMove: function(e) {
