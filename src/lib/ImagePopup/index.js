@@ -88,18 +88,26 @@ class ImagePopup {
 
     onPrevClick(e) {
         e.stopPropagation();
+        this.showPrev();
+    }
+
+    showPrev() {
         const newIndex = this.currentIndex > 0 
             ? this.currentIndex - 1 
             : this.urls.length - 1;
         this._showPhoto(newIndex);
     }
 
-    onNextClick(e) {
-        e.stopPropagation();
+    showNext(){
         const newIndex = this.currentIndex < this.urls.length - 1 
             ? this.currentIndex + 1 
             : 0;
         this._showPhoto(newIndex);
+    }
+
+    onNextClick(e) {
+        e.stopPropagation();
+        this.showNext();
     }
 
     onKeyDown(e) {
@@ -108,16 +116,10 @@ class ImagePopup {
             this.hide();
         } else if (e.keyCode === 37) {
             // Left arrow - cycle to last photo if at first
-            const newIndex = this.currentIndex > 0 
-                ? this.currentIndex - 1 
-                : this.urls.length - 1;
-            this._showPhoto(newIndex);
+            this.showPrev();
         } else if (e.keyCode === 39) {
             // Right arrow - cycle to first photo if at last
-            const newIndex = this.currentIndex < this.urls.length - 1 
-                ? this.currentIndex + 1 
-                : 0;
-            this._showPhoto(newIndex);
+            this.showNext();
         }
     }
 
