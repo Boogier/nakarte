@@ -88,16 +88,18 @@ class ImagePopup {
 
     onPrevClick(e) {
         e.stopPropagation();
-        if (this.currentIndex > 0) {
-            this._showPhoto(this.currentIndex - 1);
-        }
+        const newIndex = this.currentIndex > 0 
+            ? this.currentIndex - 1 
+            : this.urls.length - 1;
+        this._showPhoto(newIndex);
     }
 
     onNextClick(e) {
         e.stopPropagation();
-        if (this.currentIndex < this.urls.length - 1) {
-            this._showPhoto(this.currentIndex + 1);
-        }
+        const newIndex = this.currentIndex < this.urls.length - 1 
+            ? this.currentIndex + 1 
+            : 0;
+        this._showPhoto(newIndex);
     }
 
     onKeyDown(e) {
@@ -105,15 +107,17 @@ class ImagePopup {
             // ESC key
             this.hide();
         } else if (e.keyCode === 37) {
-            // Left arrow
-            if (this.currentIndex > 0) {
-                this._showPhoto(this.currentIndex - 1);
-            }
+            // Left arrow - cycle to last photo if at first
+            const newIndex = this.currentIndex > 0 
+                ? this.currentIndex - 1 
+                : this.urls.length - 1;
+            this._showPhoto(newIndex);
         } else if (e.keyCode === 39) {
-            // Right arrow
-            if (this.currentIndex < this.urls.length - 1) {
-                this._showPhoto(this.currentIndex + 1);
-            }
+            // Right arrow - cycle to first photo if at last
+            const newIndex = this.currentIndex < this.urls.length - 1 
+                ? this.currentIndex + 1 
+                : 0;
+            this._showPhoto(newIndex);
         }
     }
 
