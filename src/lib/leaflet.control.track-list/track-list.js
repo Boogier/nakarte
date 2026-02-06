@@ -1530,7 +1530,17 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerClick: function(e) {
-            new ImagePopup(e.marker.fullsize).show();
+            // Find all markers at this location (within small radius)
+            const allMarkers = this._markerLayer.findAllMarkersFromMouseEvent(e);
+            
+            // Collect all photo URLs from markers at this location
+            const photoUrls = allMarkers
+                .filter(marker => marker.fullsize)
+                .map(marker => marker.fullsize);
+            
+            if (photoUrls.length > 0) {
+                new ImagePopup(photoUrls).show();
+            }
 
             // new Contextmenu([
             //         {text: e.marker.label, header: true},
