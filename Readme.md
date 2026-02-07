@@ -1,4 +1,4 @@
-## Source code of [iOrient - Competition map](https://run-balkan.com) web-site
+## Source code of competiotion maps [iOrient.ru](https://iorient.ru)
 
 #### Install locally for development
 ```cmd
