@@ -38,6 +38,7 @@ import iconSave from '~/images/save.png';
 
 const TRACKLIST_TRACK_COLORS = ['#000', '#f0f', '#77f', '#f95', '#0ff', '#f77', '#00f', '#ee5'];
 const StartPointId = -1;
+const FinishPointId = -2;
 const CourseTrackId = 0;
 
 const TrackSegment = L.MeasuredLine.extend({
@@ -1464,7 +1465,11 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerIcon: function(marker) {
-            const className = marker.id === StartPointId ? 'symbol-start-point' : 'symbol-control-point';
+            const className = marker.id === StartPointId 
+                ? 'symbol-start-point' 
+                : marker.id === FinishPointId 
+                    ? 'symbol-finish-point' 
+                    : 'symbol-control-point';
             marker.icon = iconFromBackgroundImage('track-waypoint ' + className);
         },
 

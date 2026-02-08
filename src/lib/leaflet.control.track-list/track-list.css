@@ -228,6 +228,10 @@
     background-image: url("images/start-point.png");
 }
 
+.track-waypoint.symbol-finish-point {
+    background-image: url("images/finish-point.png");
+}
+
 .leaflet-point-placing {
     cursor: crosshair !important;
 }
