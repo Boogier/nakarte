@@ -3,7 +3,7 @@ import ko from 'knockout';
 import wellknown from 'wellknown';
 import Contextmenu from '~/lib/contextmenu';
 import ImagePopup from '~/lib/ImagePopup';
-//import ThumbnailPopup from '~/lib/ThumbnailPopup';
+import ThumbnailPopup from '~/lib/ThumbnailPopup';
 import '~/lib/knockout.component.progress/progress';
 import './track-list.css';
 import {selectFiles, readFiles} from '~/lib/file-read';
@@ -1488,9 +1488,11 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerClick: function(e) {
-            if (e.marker.id) {
-                new ImagePopup(`${config.getCheckpointPhotoUrl}${e.marker.id}`).show();
+            if (e.marker.id <= 0) {
+                return;
             }
+
+            new ImagePopup(this.getMarkerPhotoUrl(e.marker)).show();
 
             // new Contextmenu([
             //         {text: e.marker.label, header: true},
@@ -1503,25 +1505,33 @@ L.Control.TrackList = L.Control.extend({
             // ).show(e);
         },
 
-        //_currentImagePopup: null,
+        _currentImagePopup: null,
+
+        getMarkerPhotoUrl(marker) {
+            return `${config.getCheckpointPhotoUrl}${marker.id}`;
+        },
 
         onMarkerEnter: function(e) {
             e.marker._parentTrack.hover(true);
 
-            // marker’s position → convert to screen pixel coordinates
-            //const point = this._map.latLngToContainerPoint(e.marker.latlng);
+            if (e.marker.id <= 0) {
+                return;
+            }
 
-            //this._currentImagePopup = new ThumbnailPopup(e.marker.thumbnail);
-            //this._currentImagePopup.show(e, point);
+            // marker’s position → convert to screen pixel coordinates
+            const point = this._map.latLngToContainerPoint(e.marker.latlng);
+
+            this._currentImagePopup = new ThumbnailPopup(this.getMarkerPhotoUrl(e.marker));
+            this._currentImagePopup.show(e, point);
         },
 
         onMarkerLeave: function(e) {
             e.marker._parentTrack.hover(false);
 
-            // if (this._currentImagePopup) {
-            //     this._currentImagePopup.hide();
-            //     this._currentImagePopup = null;
-            // }
+            if (this._currentImagePopup) {
+                this._currentImagePopup.hide();
+                this._currentImagePopup = null;
+            }
         },
 
         removePoint: function(marker) {
