@@ -1,5 +1,9 @@
 import secrets from './secrets';
 
+const balkanTracksBaseUrl = NODE_ENV === 'production' 
+        ? 'https://iorient.ru/'
+        : 'http://localhost:55971/';
+
 const config = {
     caption: `
         <a href="about.html" target="_self">About</a> |
@@ -19,9 +23,8 @@ const config = {
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
-    balkanTracksUrl: NODE_ENV === 'production' 
-        ? 'https://iorient.ru/RunBalkan/GetIorientCompetitionTracks.aspx'
-        : 'http://localhost:55971/runbalkan/GetIorientCompetitionTracks.aspx',
+    balkanTracksUrl: `${balkanTracksBaseUrl}RunBalkan/GetCompetitionTracks.ashx`,
+    getCheckpointPhotoUrl: `${balkanTracksBaseUrl}img/GetCheckpointPhoto.ashx?Id=`,
     defaultTrackTolerance: 5,
     ...secrets,
 };

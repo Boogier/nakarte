@@ -2,7 +2,7 @@ import L from 'leaflet';
 import ko from 'knockout';
 import wellknown from 'wellknown';
 import Contextmenu from '~/lib/contextmenu';
-//import ImagePopup from '~/lib/ImagePopup';
+import ImagePopup from '~/lib/ImagePopup';
 //import ThumbnailPopup from '~/lib/ThumbnailPopup';
 import '~/lib/knockout.component.progress/progress';
 import './track-list.css';
@@ -37,6 +37,8 @@ import * as coordFormats from '~/lib/leaflet.control.coordinates/formats';
 import iconSave from '~/images/save.png';
 
 const TRACKLIST_TRACK_COLORS = ['#000', '#f0f', '#77f', '#f95', '#0ff', '#f77', '#00f', '#ee5'];
+const StartPointId = -1;
+const CourseTrackId = 0;
 
 const TrackSegment = L.MeasuredLine.extend({
     includes: L.Polyline.EditMixin,
@@ -258,7 +260,7 @@ L.Control.TrackList = L.Control.extend({
                 zIndex: 1000,
                 printTransparent: true
             }).addTo(map);
-            //this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
+            this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
             this._markerLayer.on('markerenter', this.onMarkerEnter, this);
             this._markerLayer.on('markerleave', this.onMarkerLeave, this);
             map.on('resize', this._setAdaptiveHeight, this);
@@ -413,7 +415,7 @@ L.Control.TrackList = L.Control.extend({
                 return false;
             }
 
-            markers.push(...geodata.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2] })));
+            markers.push(...geodata.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2], id: p[3] })));
             // geodata.points.forEach((p) => {
 
             //     markers.push(...p.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2] })));
@@ -1462,7 +1464,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         setMarkerIcon: function(marker) {
-            const className = marker.label === 'Start' ? 'symbol-start-point' : 'symbol-control-point';
+            const className = marker.id === StartPointId ? 'symbol-start-point' : 'symbol-control-point';
             marker.icon = iconFromBackgroundImage('track-waypoint ' + className);
         },
 
@@ -1473,7 +1475,8 @@ L.Control.TrackList = L.Control.extend({
         addPoint: function(track, srcPoint) {
             var marker = {
                 latlng: L.latLng([srcPoint.lat, srcPoint.lng]),
-                _parentTrack: track
+                _parentTrack: track,
+                id: srcPoint.id
             };
 
             this.setMarkerLabel(marker, srcPoint.name);
@@ -1484,19 +1487,21 @@ L.Control.TrackList = L.Control.extend({
             return marker;
         },
 
-        // onMarkerClick: function(e) {
-        //     new ImagePopup(e.marker.fullsize).show();
+        onMarkerClick: function(e) {
+            if (e.marker.id) {
+                new ImagePopup(`${config.getCheckpointPhotoUrl}${e.marker.id}`).show();
+            }
 
-        //     // new Contextmenu([
-        //     //         {text: e.marker.label, header: true},
-        //     //         '-',
-        //     //         {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
-        //     //         {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
-        //     //         {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
-        //     //         {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
-        //     //     ]
-        //     // ).show(e);
-        // },
+            // new Contextmenu([
+            //         {text: e.marker.label, header: true},
+            //         '-',
+            //         {text: 'Rename', callback: this.renamePoint.bind(this, e.marker)},
+            //         {text: 'Move', callback: this.beginPointMove.bind(this, e.marker)},
+            //         {text: 'Copy coordinates', callback: this.copyPointCoordinatesToClipboard.bind(this, e.marker, e)},
+            //         {text: 'Delete', callback: this.removePoint.bind(this, e.marker)},
+            //     ]
+            // ).show(e);
+        },
 
         //_currentImagePopup: null,
 
@@ -1791,8 +1796,8 @@ L.Control.TrackList = L.Control.extend({
 
         const segments = this.createTrackSegments(tr);
 
-        const trackName = tr.Id === 0 
-            ? 'Start' 
+        const trackName = tr.Id === CourseTrackId
+            ? '★★★ Race course ★★★' 
             : tr.Place + ' ' + 
                 (tr.Competitor.Team ? tr.Competitor.Team + ': ' : '') +
                 tr.Competitor.People.join(', ');
