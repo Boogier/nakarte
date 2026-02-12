@@ -408,7 +408,7 @@ L.Control.TrackList = L.Control.extend({
             if (!geodata.tracks || geodata.tracks.length === 0) {
                 return false;
             }
-            
+
             geodata.tracks.forEach((tr) => {
                 this.addTrackFromBalkanData(tr, config.defaultTrackTolerance);
             });
@@ -421,7 +421,7 @@ L.Control.TrackList = L.Control.extend({
                 return false;
             }
 
-            markers.push(...geodata.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2], id: p[3] })));
+            markers.push(...geodata.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2], id: p[3], descr: p[4] })));
             // geodata.points.forEach((p) => {
 
             //     markers.push(...p.points.map((p) => this.addPoint(startTrack, { lat: p[0], lng: p[1], name: p[2] })));
@@ -1486,7 +1486,8 @@ L.Control.TrackList = L.Control.extend({
             var marker = {
                 latlng: L.latLng([srcPoint.lat, srcPoint.lng]),
                 _parentTrack: track,
-                id: srcPoint.id
+                id: srcPoint.id,
+                descr: srcPoint.descr
             };
 
             this.setMarkerLabel(marker, srcPoint.name);
