@@ -1532,7 +1532,7 @@ L.Control.TrackList = L.Control.extend({
             // marker’s position → convert to screen pixel coordinates
             const point = this._map.latLngToContainerPoint(e.marker.latlng);
 
-            this._currentImagePopup = new ThumbnailPopup(this.getMarkerPhotoUrl(e.marker));
+            this._currentImagePopup = new ThumbnailPopup(this.getMarkerPhotoUrl(e.marker), e.marker.descr);
             this._currentImagePopup.show(e, point);
         },
 

@@ -1,8 +1,9 @@
 import './ThumbnailPopup.css';
 
 class ThumbnailPopup {
-    constructor(url) {
+    constructor(url, descr) {
         this.url = url;
+        this.descr = descr;
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
     }
@@ -16,9 +17,21 @@ class ThumbnailPopup {
         document.body.appendChild(this._container);
         this._container.className = 'hover-image-popup';
 
+        const wrapper = document.createElement('div');
+        wrapper.className = 'hover-image-popup-wrapper';
+        this._container.appendChild(wrapper);
+
         const popupImg = document.createElement('img');
         popupImg.src = this.url;
-        this._container.appendChild(popupImg);
+        wrapper.appendChild(popupImg);
+
+        if (this.descr) {
+            const descrDiv = document.createElement('div');
+            descrDiv.className = 'hover-image-popup-descr';
+            descrDiv.textContent = this.descr;
+            wrapper.appendChild(descrDiv);
+        }
+
         this._container.style.display = 'block';
 
         window.addEventListener('keydown', this.onKeyDown, true);
