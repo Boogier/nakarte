@@ -1503,7 +1503,7 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            new ImagePopup(this.getMarkerPhotoUrl(e.marker)).show();
+            new ImagePopup(this.getMarkerPhotoUrl(e.marker), e.marker.descr).show();
 
             // new Contextmenu([
             //         {text: e.marker.label, header: true},
