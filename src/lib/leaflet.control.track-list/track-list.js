@@ -262,8 +262,12 @@ L.Control.TrackList = L.Control.extend({
                 printTransparent: true
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
-            this._markerLayer.on('markerenter', this.onMarkerEnter, this);
-            this._markerLayer.on('markerleave', this.onMarkerLeave, this);
+
+            if (!L.Browser.mobile) {
+                this._markerLayer.on('markerenter', this.onMarkerEnter, this);
+                this._markerLayer.on('markerleave', this.onMarkerLeave, this);
+            }
+
             map.on('resize', this._setAdaptiveHeight, this);
             setTimeout(() => this._setAdaptiveHeight(), 0);
             return container;
