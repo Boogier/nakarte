@@ -167,6 +167,7 @@ L.Control.TrackList = L.Control.extend({
             this.readProgressRange = ko.observable();
             this.readProgressDone = ko.observable();
             this._lastTrackColor = 0;
+            this._lastTrackNumber = 0;
             this.trackListHeight = ko.observable(0);
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
@@ -192,14 +193,14 @@ L.Control.TrackList = L.Control.extend({
                     <div class="button-minimize" data-bind="click: setMinimized"></div>
                 </div>
                 <div class="inputs-row" data-bind="visible: !readingFiles()">
-                    <!--
                     <a class="button add-track" title="New track" data-bind="click: onButtonNewTrackClicked"></a>
+                    <!--
                     <a class="button open-file" title="Open file" data-bind="click: loadFilesFromDisk"></a>
                     <input type="text" class="input-url" placeholder="Track URL"
                         data-bind="textInput: url, event: {keypress: onEnterPressedInInput, contextmenu: defaultEventHandle, mousemove: defaultEventHandle}">
                     <a class="button download-url" title="Download URL" data-bind="click: loadFilesFromUrl"></a>
-                    -->
                     <a class="button menu-icon" data-bind="click: function(_,e){this.showMenu(e)}" title="Menu"></a>
+                    -->
                 </div>
                 <div style="text-align: center">
                     <div data-bind="
@@ -232,8 +233,8 @@ L.Control.TrackList = L.Control.extend({
                                 css: {'ticks-enabled': track.measureTicksShown},
                                 click: $parent.switchMeasureTicksVisibility.bind($parent)"></div>
                         </td>
-                        <td><div class="button-add-track" title="Add track segment" data-bind="click: $parent.onButtonAddSegmentClicked.bind($parent, track), css: {active: $parent.trackAddingSegment() === track}"></div></td>
-                        <td><div class="button-add-point" title="Add point" data-bind="click: $parent.onButtonAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
+                        <td><div class="button-add-track" title="Add track segment" data-bind="visible: track.id() === undefined, click: $parent.onButtonAddSegmentClicked.bind($parent, track), css: {active: $parent.trackAddingSegment() === track}"></div></td>
+                        <td><div class="button-add-point" title="Add point" data-bind="visible: track.id() === undefined, click: $parent.onButtonAddPointClicked.bind($parent, track), css: {active: $parent.trackAddingPoint() === track}"></div></td>
                         <td><a class="track-text-button" title="Actions" data-bind="click: $parent.showTrackMenu.bind($parent)">&hellip;</a></td>
                     </tr>
                 </tbody></table>
@@ -346,13 +347,17 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onButtonNewTrackClicked: function() {
-            let name = this.url().trim();
-            if (name.length > 0) {
-                this.url('');
-            } else {
-                name = 'New track';
-            }
-            this.addTrackAndEdit(name);
+            // let name = this.url().trim();
+            // if (name.length > 0) {
+            //     this.url('');
+            // } else {
+            //     name = 'New track';
+            // }
+            // this.addTrackAndEdit(name);
+            this._lastTrackNumber += 1;
+            const name = 'New track ' + this._lastTrackNumber;
+            
+            this.addTrackAndEdit(name, this._lastTrackNumber - 1);
         },
 
         addSegmentAndEdit: function(track) {
@@ -363,8 +368,8 @@ L.Control.TrackList = L.Control.extend({
             this.trackAddingSegment(track);
         },
 
-        addTrackAndEdit: function(name) {
-            const track = this.addTrack({name: name});
+        addTrackAndEdit: function(name, position = -1) {
+            const track = this.addTrack({name: name}, position);
             this.addSegmentAndEdit(track);
             return track;
         },
@@ -626,22 +631,24 @@ L.Control.TrackList = L.Control.extend({
                 function() {
                     return {text: `${track.name()}`, header: true};
                 },
-                '-',
+                //'-',
                 //{text: 'Rename', callback: this.renameTrack.bind(this, track)},
                 //{text: 'Duplicate', callback: this.duplicateTrack.bind(this, track)},
                 //{text: 'Reverse', callback: this.reverseTrack.bind(this, track)},
-                {text: 'Show elevation profile', callback: this.showElevationProfileForTrack.bind(this, track)},
                 //'-',
                 //{text: 'Delete', callback: this.removeTrack.bind(this, track)},
                 '-',
                 {text: 'Save as GPX', callback: () => this.saveTrackAsFile(track, geoExporters.saveGpx, '.gpx')},
                 {text: 'Save as KML', callback: () => this.saveTrackAsFile(track, geoExporters.saveKml, '.kml')},
                 //{text: 'Copy link for track', callback: this.copyTrackLinkToClipboard.bind(this, track)},
-                {text: 'Extra', separator: true},
-                {
-                    text: 'Save as GPX with added elevation (SRTM)',
-                    callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true),
-                },
+                '-',
+                {text: 'Show elevation profile', callback: this.showElevationProfileForTrack.bind(this, track)},
+                {text: 'Save as GPX with added elevation (SRTM)', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true)}
+                // {text: 'Extra', separator: true},
+                // {
+                //     text: 'Save as GPX with added elevation (SRTM)',
+                //     callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true),
+                // },
             ];
             track._actionsMenu = new Contextmenu(items);
         },
@@ -824,23 +831,24 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
-        // eslint-disable-next-line no-unused-vars
         onTrackSegmentClick: function(polyline, e) {
-            this.bindTooltip(polyline, e.latlng);
-            
-            // prevend track editing
-
-            // if (this.isPlacingPoint) {
-            //     return;
-            // }
-            // const trackSegment = e.target;
-            // if (this._lineJoinActive) {
-            //     L.DomEvent.stopPropagation(e);
-            //     this.joinTrackSegments(trackSegment, isPointCloserToStart(e.target.getLatLngs(), e.latlng));
-            // } else {
-            //     this.startEditTrackSegement(trackSegment);
-            //     L.DomEvent.stopPropagation(e);
-            // }
+            if (polyline._parentTrack.id() > 0) {
+                this.bindTooltip(polyline, e.latlng);
+            } else {
+                // edit track segment
+                if (this.isPlacingPoint) {
+                    return;
+                }
+                
+                const trackSegment = e.target;
+                if (this._lineJoinActive) {
+                    L.DomEvent.stopPropagation(e);
+                    this.joinTrackSegments(trackSegment, isPointCloserToStart(e.target.getLatLngs(), e.latlng));
+                } else {
+                    this.startEditTrackSegement(trackSegment);
+                    L.DomEvent.stopPropagation(e);
+                }
+            }
         },
 
         startEditTrackSegement: function(polyline) {
@@ -1417,18 +1425,14 @@ L.Control.TrackList = L.Control.extend({
             this.addTrack({name: "New track", tracks: [newNodes]});
         },
 
-        addTrack: function(geodata) {
+        addTrack: function(geodata, position = -1) {
             var color;
             color = geodata.color;
-            // if (!color) {
-            //     if (geodata.name == "Region bounds"){
-            //         color = this.colors.length - 1;
-            //     }
-            //     else {
-            //         color = this._lastTrackColor;
-            //         this._lastTrackColor = (this._lastTrackColor + 1) % (this.colors.length - 1); // exclude last color (used for region bounds)
-            //     }
-            // }
+            if (color === undefined) {
+                console.log('bla ' + this._lastTrackColor);
+                color = this._lastTrackColor;
+                this._lastTrackColor = (this._lastTrackColor + 1) % this.colors.length;
+            }
             var track = {
                 externalId: ko.observable(geodata.externalId),
                 id: ko.observable(geodata.id),
@@ -1447,7 +1451,11 @@ L.Control.TrackList = L.Control.extend({
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
 
-            this.tracks.push(track);
+            if (position === -1) {
+                this.tracks.push(track);
+            } else {
+                this.tracks.splice(position, 0, track);
+            }
 
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
@@ -1534,6 +1542,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onMarkerClick: function(e) {
+            if (!e.marker.thumbnail) {
+                return;
+            }
+
             // Find all markers at this location (within small radius)
             const latlng = this._lastMarkerHoverLatLng ? this._lastMarkerHoverLatLng : e.latlng;
             const allMarkers = this._markerLayer.findAllMarkersFromMouseEvent(latlng);
@@ -1564,6 +1576,10 @@ L.Control.TrackList = L.Control.extend({
             e.marker._parentTrack.hover(true);
 
             this._lastMarkerHoverLatLng = e.marker.latlng;
+
+            if (!e.marker.thumbnail) {
+                return;
+            }
 
             // marker’s position → convert to screen pixel coordinates
             const point = this._map.latLngToContainerPoint(e.marker.latlng);
@@ -2021,7 +2037,10 @@ L.Control.TrackList = L.Control.extend({
         },
 
         showElevationProfileForTrack: async function(track) {
-            await this.updateBalkanTrack(track.id());
+            if (track.id()) {
+                await this.updateBalkanTrack(track.id());
+            }
+            
             var lines = this.getTrackPolylines(track),
                 path = [],
                 i;
