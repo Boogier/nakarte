@@ -1429,7 +1429,6 @@ L.Control.TrackList = L.Control.extend({
             var color;
             color = geodata.color;
             if (color === undefined) {
-                console.log('bla ' + this._lastTrackColor);
                 color = this._lastTrackColor;
                 this._lastTrackColor = (this._lastTrackColor + 1) % this.colors.length;
             }
@@ -2040,7 +2039,7 @@ L.Control.TrackList = L.Control.extend({
             if (track.id()) {
                 await this.updateBalkanTrack(track.id());
             }
-            
+
             var lines = this.getTrackPolylines(track),
                 path = [],
                 i;
