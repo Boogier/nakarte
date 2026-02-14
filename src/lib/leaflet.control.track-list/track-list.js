@@ -335,15 +335,17 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onButtonNewTrackClicked: function() {
-            let name = this.url().trim();
-            if (name.length > 0) {
-                this.url('');
-            } else {
-                this._lastTrackNumber += 1;
-                name = 'New track ' + this._lastTrackNumber;
-            }
+            // let name = this.url().trim();
+            // if (name.length > 0) {
+            //     this.url('');
+            // } else {
+            //     this._lastTrackNumber += 1;
+            //     name = 'New track ' + this._lastTrackNumber;
+            // }
+            this._lastTrackNumber += 1;
+            name = 'New track ' + this._lastTrackNumber;
             
-            this.addTrackAndEdit(name, false);
+            this.addTrackAndEdit(name, this._lastTrackNumber);
         },
 
         addSegmentAndEdit: function(track) {
@@ -354,8 +356,8 @@ L.Control.TrackList = L.Control.extend({
             this.trackAddingSegment(track);
         },
 
-        addTrackAndEdit: function(name, append = true) {
-            const track = this.addTrack({name: name}, append);
+        addTrackAndEdit: function(name, position = -1) {
+            const track = this.addTrack({name: name}, position);
             this.addSegmentAndEdit(track);
             return track;
         },
@@ -1393,7 +1395,7 @@ L.Control.TrackList = L.Control.extend({
             this.addTrack({name: "New track", tracks: [newNodes]});
         },
 
-        addTrack: function(geodata, append = true) {
+        addTrack: function(geodata, position = -1) {
             var color;
             color = geodata.color;
             if (!color) {
@@ -1419,10 +1421,10 @@ L.Control.TrackList = L.Control.extend({
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
 
-            if (append) {
+            if (position === -1) {
                 this.tracks.push(track);
             } else {
-                this.tracks.unshift(track);
+                this.tracks.splice(position, 0, track);
             }
 
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
