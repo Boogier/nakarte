@@ -343,7 +343,7 @@ L.Control.TrackList = L.Control.extend({
                 name = 'New track ' + this._lastTrackNumber;
             }
             
-            this.addTrackAndEdit(name);
+            this.addTrackAndEdit(name, false);
         },
 
         addSegmentAndEdit: function(track) {
@@ -354,8 +354,8 @@ L.Control.TrackList = L.Control.extend({
             this.trackAddingSegment(track);
         },
 
-        addTrackAndEdit: function(name) {
-            const track = this.addTrack({name: name});
+        addTrackAndEdit: function(name, append = true) {
+            const track = this.addTrack({name: name}, append);
             this.addSegmentAndEdit(track);
             return track;
         },
@@ -1393,7 +1393,7 @@ L.Control.TrackList = L.Control.extend({
             this.addTrack({name: "New track", tracks: [newNodes]});
         },
 
-        addTrack: function(geodata) {
+        addTrack: function(geodata, append = true) {
             var color;
             color = geodata.color;
             if (!color) {
@@ -1419,7 +1419,11 @@ L.Control.TrackList = L.Control.extend({
             (geodata.tracks || []).forEach(this.addTrackSegment.bind(this, track));
             (geodata.points || []).forEach(this.addPoint.bind(this, track));
 
-            this.tracks.push(track);
+            if (append) {
+                this.tracks.push(track);
+            } else {
+                this.tracks.unshift(track);
+            }
 
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
