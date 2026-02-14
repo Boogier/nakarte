@@ -810,7 +810,7 @@ L.Control.TrackList = L.Control.extend({
                 if (this.isPlacingPoint) {
                     return;
                 }
-                
+
                 const trackSegment = e.target;
                 if (this._lineJoinActive) {
                     L.DomEvent.stopPropagation(e);
@@ -1397,7 +1397,7 @@ L.Control.TrackList = L.Control.extend({
         addTrack: function(geodata, position = -1) {
             var color;
             color = geodata.color;
-            if (!color) {
+            if (color === undefined) {
                 color = this._lastTrackColor;
                 this._lastTrackColor = (this._lastTrackColor + 1) % this.colors.length;
             }
