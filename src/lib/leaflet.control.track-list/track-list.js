@@ -343,7 +343,7 @@ L.Control.TrackList = L.Control.extend({
             //     name = 'New track ' + this._lastTrackNumber;
             // }
             this._lastTrackNumber += 1;
-            name = 'New track ' + this._lastTrackNumber;
+            const name = 'New track ' + this._lastTrackNumber;
             
             this.addTrackAndEdit(name, this._lastTrackNumber);
         },
@@ -618,7 +618,7 @@ L.Control.TrackList = L.Control.extend({
                 items.push(
                     '-',
                     {text: 'Show elevation profile', callback: this.showElevationProfileForTrack.bind(this, track)},
-                    {text: 'Save as GPX with added elevation (SRTM)', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true),}
+                    {text: 'Save as GPX with added elevation (SRTM)', callback: this.saveTrackAsFile.bind(this, track, geoExporters.saveGpxWithElevations, '.gpx', true)}
                 );
             }
             track._actionsMenu = new Contextmenu(items);
@@ -802,16 +802,15 @@ L.Control.TrackList = L.Control.extend({
             }
         },
 
-        // eslint-disable-next-line no-unused-vars
         onTrackSegmentClick: function(polyline, e) {
-            if (polyline._parentTrack.id() >0) {
+            if (polyline._parentTrack.id() > 0) {
                 this.bindTooltip(polyline, e.latlng);
-            }
-            else {
+            } else {
                 // edit track segment
                 if (this.isPlacingPoint) {
                     return;
                 }
+                
                 const trackSegment = e.target;
                 if (this._lineJoinActive) {
                     L.DomEvent.stopPropagation(e);
