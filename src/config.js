@@ -24,7 +24,7 @@ const config = {
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
     
-    balkanTracksUrl: `${balkanTracksBaseUrl}RunBalkan/GetCompetitionTracks.ashx`,
+    balkanTracksUrl: `api/map/get-map-data`,
     getCheckpointPhotoUrl: `${balkanTracksBaseUrl}img/GetCheckpointPhoto.ashx?Id=`,
     getUserSettingsUrl: `/api/auth/user-settings`,
     signOutUrl: `/api/auth/sign-out`,
