@@ -55,6 +55,29 @@ function isInIframe() {
     return window.self !== window.top;
 }
 
+async function getUserSettings(captionControl) {
+    console.log('Fetching user settings from Balkan Tracks server...');
+    try {
+        const xhr = await fetch(config.getUserSettingsUrl, {
+            method: 'GET',
+            responseType: 'json'
+        });
+
+        const userSettings = await xhr.json();
+        console.log(`User name: ${userSettings.UserName}`);
+        
+        const captionContent = `
+            ${config.caption}
+            <a href="about.html" target="_self">Authorized: ${userSettings.UserName}</a> |
+            `;
+        
+        captionControl.setContents(captionContent);
+        console.log('Caption updated with user settings.');
+    } catch (error) {
+        console.error('Failed to fetch user settings:', error);
+    }
+}
+
 function setUp() { // eslint-disable-line complexity
     // const startInfo = {
     //     href: window.location.href,
@@ -92,11 +115,11 @@ function setUp() { // eslint-disable-line complexity
         keysToExcludeOnCopyLink: ['q', 'r']
     });
 
-
-    new L.Control.Caption(config.caption, {
-            position: 'topleft'
-        }
-    ).addTo(map);
+    const captionControl = new L.Control.Caption(config.caption, {
+        position: 'topleft'
+    }).addTo(map);
+    
+    getUserSettings(captionControl);
 
     new ZoomDisplay().addTo(map);
 
@@ -221,7 +244,7 @@ function setUp() { // eslint-disable-line complexity
         printControl.setMinimized();
     }
 
-    const jnxControl = new L.Control.JNX(layersControl, {position: 'bottomleft'})
+    new L.Control.JNX(layersControl, {position: 'bottomleft'})
         .addTo(map)
         .enableHashState('j');
 
@@ -363,13 +386,13 @@ function setUp() { // eslint-disable-line complexity
     }
 
     function logUsedMaps() {
-        const layers = [];
-        map.eachLayer((layer) => {
-            const layerInfo = getLayerLoggingInfo(layer);
-            if (layerInfo) {
-                layers.push(layerInfo);
-            }
-        });
+        // const layers = [];
+        // map.eachLayer((layer) => {
+        //     const layerInfo = getLayerLoggingInfo(layer);
+        //     if (layerInfo) {
+        //         layers.push(layerInfo);
+        //     }
+        // });
         // const bounds = map.getBounds();
         // logging.logEvent('activeLayers', {
         //     layers,
@@ -409,22 +432,22 @@ function setUp() { // eslint-disable-line complexity
         });
     });
 
-    jnxControl.on('tileExportStart', function(e) {
-        logging.logEvent('tileExportStart', {
-            eventId: e.eventId,
-            layer: getLayerLoggingInfo(e.layer),
-            zoom: e.zoom,
-            bounds: getLatLngBoundsLoggingInfo(e.bounds),
-        });
-    });
+    // jnxControl.on('tileExportStart', function(e) {
+    //     logging.logEvent('tileExportStart', {
+    //         eventId: e.eventId,
+    //         layer: getLayerLoggingInfo(e.layer),
+    //         zoom: e.zoom,
+    //         bounds: getLatLngBoundsLoggingInfo(e.bounds),
+    //     });
+    // });
 
-    jnxControl.on('tileExportEnd', function(e) {
-        logging.logEvent('tileExportEnd', {
-            eventId: e.eventId,
-            success: e.success,
-            error: getErrorLoggingInfo(e.error),
-        });
-    });
+    // jnxControl.on('tileExportEnd', function(e) {
+    //     logging.logEvent('tileExportEnd', {
+    //         eventId: e.eventId,
+    //         success: e.success,
+    //         error: getErrorLoggingInfo(e.error),
+    //     });
+    // });
 
     // searchControl.on('resultreceived', function(e) {
     //     logging.logEvent('SearchProviderSelected', {
