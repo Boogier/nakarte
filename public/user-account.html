@@ -53,7 +53,6 @@
             const content = document.getElementById('content');
             content.innerHTML = `
                 <div class="error">${escapeHtml(message)}</div>
-                <p><a href="index.html">Return to main page</a></p>
             `;
         }
         
@@ -75,7 +74,7 @@
                 });
                 
                 if (response.ok) {
-                    window.location.href = 'index.html';
+                    history.back();
                 } else {
                     alert('Failed to sign out. Please try again.');
                 }
