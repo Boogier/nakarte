@@ -56,7 +56,6 @@ function isInIframe() {
 }
 
 async function getUserSettings(captionControl) {
-    console.log('Fetching user settings from Balkan Tracks server...');
     try {
         const xhr = await fetch(config.getUserSettingsUrl, {
             method: 'GET',
@@ -64,7 +63,6 @@ async function getUserSettings(captionControl) {
         });
 
         const userSettings = await xhr.json();
-        console.log(`User name: ${userSettings.UserName}`);
         
         const captionContent = `
             ${config.caption}
@@ -72,9 +70,8 @@ async function getUserSettings(captionControl) {
             `;
         
         captionControl.setContents(captionContent);
-        console.log('Caption updated with user settings.');
-    } catch (error) {
-        console.error('Failed to fetch user settings:', error);
+    } catch {
+        // unauthorized
     }
 }
 
