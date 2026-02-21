@@ -180,7 +180,15 @@ module.exports = {
         client: {
             overlay: false,
         },
-    },
+		port: 8080,
+		proxy: {
+		  "/api": {
+			target: "http://localhost:55971", // IIS Express port
+			changeOrigin: true,
+			secure: false
+		  }
+		}    
+	},
 
     entry: {
         app: paths.appIndexJs,

@@ -23,8 +23,11 @@ const config = {
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
+    
     balkanTracksUrl: `${balkanTracksBaseUrl}RunBalkan/GetCompetitionTracks.ashx`,
     getCheckpointPhotoUrl: `${balkanTracksBaseUrl}img/GetCheckpointPhoto.ashx?Id=`,
+    getUserSettingsUrl: `/api/auth/user-settings`,
+    
     defaultTrackTolerance: 5,
     ...secrets,
 };
