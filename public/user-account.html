@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="pages.css">
+    <title>iOrient - User Account</title>
+</head>
+<body>
+    <a href="#" class="back-link" onclick="history.back(); return false;">← Back to Map</a>
+    
+    <h1>User Account</h1>
+    
+    <div id="content">
+        <div class="loading">Loading user information...</div>
+    </div>
+    
+    <script>
+        async function loadUserSettings() {
+            try {
+                const response = await fetch('/api/auth/user-settings', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Not authorized');
+                }
+                
+                const userSettings = await response.json();
+                displayUserInfo(userSettings);
+            } catch (error) {
+                displayError('You are not authorized to view this page.');
+            }
+        }
+        
+        function displayUserInfo(userSettings) {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="user-info">
+                    <div class="user-info-label">User Name:</div>
+                    <div class="user-info-value">${escapeHtml(userSettings.UserName)}</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="button button-danger" onclick="signOut()">Sign Out</button>
+                </div>
+            `;
+        }
+        
+        function displayError(message) {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="error">${escapeHtml(message)}</div>
+                <p><a href="index.html">Return to main page</a></p>
+            `;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        async function signOut() {
+            if (!confirm('Are you sure you want to sign out?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/sign-out', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Failed to sign out. Please try again.');
+                }
+            } catch (error) {
+                alert('An error occurred while signing out: ' + error.message);
+            }
+        }
+        
+        // Load user settings when page loads
+        loadUserSettings();
+    </script>
+    
+    <footer>
+        <p>&copy; Boogier 2026</p>
+    </footer>
+</body>
+</html>

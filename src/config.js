@@ -27,6 +27,7 @@ const config = {
     balkanTracksUrl: `${balkanTracksBaseUrl}RunBalkan/GetCompetitionTracks.ashx`,
     getCheckpointPhotoUrl: `${balkanTracksBaseUrl}img/GetCheckpointPhoto.ashx?Id=`,
     getUserSettingsUrl: `/api/auth/user-settings`,
+    signOutUrl: `/api/auth/sign-out`,
     
     defaultTrackTolerance: 5,
     ...secrets,

@@ -66,12 +66,14 @@ async function getUserSettings(captionControl) {
         
         const captionContent = `
             ${config.caption}
-            <a href="about.html" target="_self">Authorized: ${userSettings.UserName}</a> |
+            <a href="user-account.html" target="_self">Authorized: ${userSettings.UserName}</a> |
             `;
         
         captionControl.setContents(captionContent);
+        return userSettings;
     } catch {
         // unauthorized
+        return null;
     }
 }
 
