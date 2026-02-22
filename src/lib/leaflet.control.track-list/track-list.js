@@ -1535,7 +1535,7 @@ L.Control.TrackList = L.Control.extend({
         _currentImagePopup: null,
 
         getMarkerPhotoUrl(marker) {
-            return `${config.getCheckpointPhotoUrl}${marker.id}`;
+            return `${config.getCheckpointPhotoUrl}?checkpointId=${marker.id}`;
         },
 
         onMarkerEnter: function(e) {

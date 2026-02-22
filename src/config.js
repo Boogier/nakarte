@@ -1,9 +1,5 @@
 import secrets from './secrets';
 
-const balkanTracksBaseUrl = NODE_ENV === 'production' 
-        ? 'https://iorient.ru/'
-        : 'http://localhost:55971/';
-
 const config = {
     caption: `
         <a href="about.html" target="_self">About</a> |
@@ -24,10 +20,10 @@ const config = {
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
     
-    balkanTracksUrl: `/api/map/get-map-data`,
-    getCheckpointPhotoUrl: `${balkanTracksBaseUrl}img/GetCheckpointPhoto.ashx?Id=`,
-    getUserSettingsUrl: `/api/auth/user-settings`,
-    signOutUrl: `/api/auth/sign-out`,
+    balkanTracksUrl: '/api/map/get-map-data',
+    getCheckpointPhotoUrl: '/api/map/get-checkpoint-photo',
+    getUserSettingsUrl: '/api/auth/user-settings',
+    signOutUrl: '/api/auth/sign-out',
     
     defaultTrackTolerance: 5,
     ...secrets,
