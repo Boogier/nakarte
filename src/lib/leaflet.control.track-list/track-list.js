@@ -1516,6 +1516,13 @@ L.Control.TrackList = L.Control.extend({
 
         onMarkerClick: function(e) {
             if (e.marker.id <= 0) {
+                if (e.marker.descr) {
+                    this._currentPopup = L.popup()
+                        .setLatLng(e.marker.latlng)
+                        .setContent(e.marker.descr)
+                        .openOn(this._map);
+                }
+                
                 return;
             }
 
@@ -1533,6 +1540,7 @@ L.Control.TrackList = L.Control.extend({
         },
 
         _currentImagePopup: null,
+        _currentPopup: null,
 
         getMarkerPhotoUrl(marker) {
             return `${config.getCheckpointPhotoUrl}?checkpointId=${marker.id}`;
@@ -1542,6 +1550,13 @@ L.Control.TrackList = L.Control.extend({
             e.marker._parentTrack.hover(true);
 
             if (e.marker.id <= 0) {
+                if (e.marker.descr) {
+                    this._currentPopup = L.popup()
+                        .setLatLng(e.marker.latlng)
+                        .setContent(e.marker.descr)
+                        .openOn(this._map);
+                }
+
                 return;
             }
 
@@ -1558,6 +1573,11 @@ L.Control.TrackList = L.Control.extend({
             if (this._currentImagePopup) {
                 this._currentImagePopup.hide();
                 this._currentImagePopup = null;
+            }
+
+            if (this._currentPopup) {
+                this._currentPopup.remove();
+                this._currentPopup = null;
             }
         },
 
