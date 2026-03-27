@@ -260,7 +260,8 @@ L.Control.TrackList = L.Control.extend({
                 print: true,
                 scaleDependent: true,
                 zIndex: 1000,
-                printTransparent: true
+                printTransparent: true,
+                labelFontSize: 16
             }).addTo(map);
             this._markerLayer.on('markerclick markercontextmenu', this.onMarkerClick, this);
 

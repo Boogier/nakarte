@@ -326,12 +326,12 @@ L.Layer.CanvasMarkers = L.GridLayer.extend({
                     const x = p[0] - tileW;
                     const y = p[1] - tileN;
                     ctx.textBaseline = 'bottom';
-                    ctx.shadowColor = '#fff';
-                    ctx.strokeStyle = '#fff';
-                    ctx.fillStyle = '#000';
-                    ctx.lineWidth = 1.2 * this.options.iconScale;
-                    ctx.shadowBlur = this.options.labelShadowWidth * this.options.iconScale;
-                    ctx.strokeText(job.label, x, y + textHeight);
+                    // ctx.shadowColor = '#fff';
+                    // ctx.strokeStyle = '#fff';
+                     ctx.fillStyle = '#000';
+                    // ctx.lineWidth = 1.2 * this.options.iconScale;
+                    // ctx.shadowBlur = this.options.labelShadowWidth * this.options.iconScale;
+                    // ctx.strokeText(job.label, x, y + textHeight);
                     ctx.shadowBlur = 0;
                     ctx.fillText(job.label, x, y + textHeight);
                 }
