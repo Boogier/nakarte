@@ -230,7 +230,9 @@ function setUp() { // eslint-disable-line complexity
 
     tracklist.addTo(map);
 
-    new L.Control.Filters(tracklist, {position: 'bottomright'}).addTo(map);
+    new L.Control.Filters(tracklist, {position: 'bottomright'})
+        .addTo(map)
+        .enableHashState('nf');
 
     const tracksHashParams = tracklist.hashParams();
 

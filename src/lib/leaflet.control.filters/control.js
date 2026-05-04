@@ -3,6 +3,7 @@ import L from 'leaflet';
 
 import '~/lib/controls-styles/controls-styles.css';
 import '~/lib/leaflet.control.commons';
+import '~/lib/leaflet.hashState/leaflet.hashState';
 
 import './control.css';
 
@@ -11,11 +12,18 @@ L.Control.Filters = L.Control.extend({
         position: 'bottomright',
     },
 
+    includes: [L.Mixin.Events, L.Mixin.HashState],
+
+    stateChangeEvents: ['change'],
+
     initialize: function (tracklist, options) {
         L.Control.prototype.initialize.call(this, options);
         this._tracklist = tracklist;
         this.nameFilter = ko.observable('');
-        this.nameFilter.subscribe(() => this._applyFilters());
+        this.nameFilter.subscribe(() => {
+            this._applyFilters();
+            this.fire('change');
+        });
     },
 
     onAdd: function (map) {
@@ -104,5 +112,26 @@ L.Control.Filters = L.Control.extend({
 
     resetFilters: function () {
         this.nameFilter('');
+    },
+
+    serializeState: function () {
+        const value = (this.nameFilter() || '').trim();
+        if (!value) {
+            return null;
+        }
+        return [encodeURIComponent(value)];
+    },
+
+    unserializeState: function (state) {
+        if (!state || !state.length) {
+            this.nameFilter('');
+            return true;
+        }
+        try {
+            this.nameFilter(decodeURIComponent(state[0]));
+        } catch (e) {
+            return false;
+        }
+        return true;
     },
 });
