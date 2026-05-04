@@ -1,8 +1,8 @@
 import secrets from './secrets';
 
-const balkanServerUrl = NODE_ENV === 'production' 
-        ? 'https://iorient.ru/'
-        : 'http://localhost:55971/';
+const balkanServerUrl = NODE_ENV === 'production'
+        ? 'https://iorient.ru/runbalkan/'
+        : '/runbalkan/';
 
 const config = {
     caption: `
@@ -24,8 +24,8 @@ const config = {
     mapillaryRasterTilesUrl: 'https://mapillary.nakarte.me/{z}/{x}/{y}',
     urlsBypassCORSProxy: [new RegExp('^https://pkk\\.rosreestr\\.ru/', 'u')],
     elevationTileUrl: 'https://tiles.nakarte.me/elevation/{z}/{x}/{y}',
-    balkanTracksUrl: balkanServerUrl + 'runbalkan/GetTracks.aspx?wkt=1',
-    balkanPhotosUrl: balkanServerUrl + 'runbalkan/GetPhotos.aspx',
+    balkanTracksUrl: balkanServerUrl + 'GetTracks.aspx?wkt=1',
+    balkanPhotosUrl: balkanServerUrl + 'GetPhotos.aspx',
     ...secrets,
 };
 
