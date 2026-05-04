@@ -1,0 +1,48 @@
+.control-filters {
+    line-height: 1.4;
+    min-width: 14em;
+}
+
+.control-filters .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.control-filters .filter-input {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left !important;
+    height: 22px;
+}
+
+.control-filters table.layout {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.control-filters table.layout > tbody > tr > td {
+    padding: 3px 0;
+    vertical-align: middle;
+}
+
+.control-filters table.layout > tbody > tr > td.label {
+    padding-right: 6px;
+    white-space: nowrap;
+    color: #555;
+}
+
+.control-filters .button-row {
+    text-align: right;
+    margin-top: 4px;
+}
+
+.control-filters .button-reset {
+    cursor: pointer;
+}
+
+.icon-filters {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'><path d='M3 4h18v2l-7 8v6l-4-2v-4L3 6z'/></svg>");
+}
