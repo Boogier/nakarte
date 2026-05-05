@@ -1,5 +1,8 @@
 .control-filters {
     line-height: 1.4;
+}
+
+.control-filters .leaflet-control-content {
     min-width: 14em;
 }
 
