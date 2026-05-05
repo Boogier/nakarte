@@ -218,7 +218,8 @@ L.Control.TrackList = L.Control.extend({
                 <!-- /ko -->
                 <div class="tracks-rows-wrapper" data-bind="style: {maxHeight: trackListHeight}">
                 <table class="tracks-rows"><tbody data-bind="foreach: {data: tracks, as: 'track'}">
-                    <tr data-bind="event: {
+                    <tr data-bind="visible: !track.hiddenByFilter(),
+                                   event: {
                                        contextmenu: $parent.showTrackMenu.bind($parent),
                                        mouseenter: $parent.onTrackRowMouseEnter.bind($parent, track),
                                        mouseleave: $parent.onTrackRowMouseLeave.bind($parent, track)
@@ -495,7 +496,8 @@ L.Control.TrackList = L.Control.extend({
         },
 
         onTrackVisibilityChanged: function(track) {
-            if (track.visible()) {
+            const visible = track.visible() && !track.hiddenByFilter();
+            if (visible) {
                 this.map.addLayer(track.feature);
                 this._markerLayer.addMarkers(track.markers);
             } else {
@@ -1440,6 +1442,7 @@ L.Control.TrackList = L.Control.extend({
                 tolerance: ko.observable(geodata.tolerance),
                 color: ko.observable(color),
                 visible: ko.observable(!geodata.trackHidden),
+                hiddenByFilter: ko.observable(false),
                 length: ko.observable(0),
                 measureTicksShown: ko.observable(geodata.measureTicksShown || false),
                 feature: L.featureGroup([]),
@@ -1457,6 +1460,7 @@ L.Control.TrackList = L.Control.extend({
             }
 
             track.visible.subscribe(this.onTrackVisibilityChanged.bind(this, track));
+            track.hiddenByFilter.subscribe(this.onTrackVisibilityChanged.bind(this, track));
             track.measureTicksShown.subscribe(this.setTrackMeasureTicksVisibility.bind(this, track));
             track.color.subscribe(this.onTrackColorChanged.bind(this, track));
             track.hover.subscribe(this.onTrackHoverChanged.bind(this, track));
@@ -1894,7 +1898,10 @@ L.Control.TrackList = L.Control.extend({
                 return;
             }
 
-            markers.push(...p.Photos.map((p) => this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] })));
+            const newMarkers = p.Photos.map((p) => this.addPoint(existingTrack, { lat: p[0], lng: p[1], thumbnail: p[2], fullsize: p[3] }));
+            if (existingTrack.visible() && !existingTrack.hiddenByFilter()) {
+                markers.push(...newMarkers);
+            }
         });
 
         this._markerLayer.addMarkers(markers);
@@ -2073,11 +2080,19 @@ L.Control.TrackList = L.Control.extend({
         },
 
         showAllTracks: function() {
-            this.tracks().forEach((track) => track.visible(true));
+            this.tracks().forEach((track) => {
+                if (!track.hiddenByFilter()) {
+                    track.visible(true);
+                }
+            });
         },
 
         hideAllTracks: function() {
-            this.tracks().forEach((track) => track.visible(false));
+            this.tracks().forEach((track) => {
+                if (!track.hiddenByFilter()) {
+                    track.visible(false);
+                }
+            });
         },
 
         onTrackCheckboxClicked: function(clickedTrack, event) {

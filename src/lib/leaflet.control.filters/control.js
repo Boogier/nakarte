@@ -100,9 +100,9 @@ L.Control.Filters = L.Control.extend({
             const nameFilter = (this.nameFilter() || '').trim().toLowerCase();
             this._tracklist.tracks().forEach((track) => {
                 const trackName = (track.name() || '').toLowerCase();
-                const matches = !nameFilter || trackName.includes(nameFilter);
-                if (track.visible() !== matches) {
-                    track.visible(matches);
+                const filteredOut = nameFilter && !trackName.includes(nameFilter);
+                if (track.hiddenByFilter() !== Boolean(filteredOut)) {
+                    track.hiddenByFilter(Boolean(filteredOut));
                 }
             });
         } finally {
