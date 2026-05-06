@@ -1,4 +1,5 @@
 //import * as Sentry from '@sentry/browser';
+import '~/queryToHash';
 import './index.css';
 import * as App from './App';
 import config from './config';
