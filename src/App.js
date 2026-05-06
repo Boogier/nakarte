@@ -16,7 +16,6 @@ import '~/lib/leaflet.control.panoramas';
 import '~/lib/leaflet.control.track-list/track-list';
 import '~/lib/leaflet.control.track-list/control-ruler';
 import '~/lib/leaflet.control.track-list/track-list.hash-state';
-import '~/lib/leaflet.control.filters/control';
 import enableLayersControlAdaptiveHeight from '~/lib/leaflet.control.layers.adaptive-height';
 import enableLayersMinimize from '~/lib/leaflet.control.layers.minimize';
 import enableLayersConfig from '~/lib/leaflet.control.layers.configure';
@@ -229,10 +228,7 @@ function setUp() { // eslint-disable-line complexity
     /* controls bottom-right corner */
 
     tracklist.addTo(map);
-
-    new L.Control.Filters(tracklist, {position: 'bottomright'})
-        .addTo(map)
-        .enableHashState('nf');
+    tracklist.enableHashState('nf');
 
     const tracksHashParams = tracklist.hashParams();
 

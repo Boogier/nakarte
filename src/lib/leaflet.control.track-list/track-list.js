@@ -12,6 +12,7 @@ import loadFromUrl from './lib/loadFromUrl';
 import * as geoExporters from './lib/geo_file_exporters';
 import copyToClipboard from '~/lib/clipboardCopy';
 import {saveAs} from '~/vendored/github.com/eligrey/FileSaver';
+import '~/lib/leaflet.hashState/leaflet.hashState';
 import '~/lib/leaflet.layer.canvasMarkers';
 import '~/lib/leaflet.lineutil.simplifyLatLngs';
 import iconFromBackgroundImage from '~/lib/iconFromBackgroundImage';
@@ -155,7 +156,9 @@ L.Control.TrackList = L.Control.extend({
             },
             keysToExcludeOnCopyLink: [],
         },
-        includes: L.Mixin.Events,
+        includes: [L.Mixin.Events, L.Mixin.HashState],
+
+        stateChangeEvents: ['filterchange'],
 
         colors: TRACKLIST_TRACK_COLORS,
 
@@ -172,6 +175,11 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+            this.nameFilter = ko.observable('');
+            this.nameFilter.subscribe(() => {
+                this._applyFilters();
+                this.fire('filterchange');
+            });
         },
 
         onAdd: function(map) {
@@ -209,6 +217,12 @@ L.Control.TrackList = L.Control.extend({
                         params: {progressRange: readProgressRange, progressDone: readProgressDone}
                         },
                         visible: readingFiles"></div>
+                </div>
+                <div class="filter-row">
+                    <input type="text" class="filter-input" placeholder="Filter by name..."
+                           data-bind="textInput: nameFilter">
+                    <a class="filter-reset" title="Reset filter"
+                       data-bind="click: resetFilters, visible: nameFilter().length > 0">&times;</a>
                 </div>
                  <!-- ko if: tracks().length >= 2 -->
                 <div class="tracks-show-hide-all-wrapper">
@@ -1469,6 +1483,7 @@ L.Control.TrackList = L.Control.extend({
             this.onTrackVisibilityChanged(track);
             this.attachColorSelector(track);
             this.attachActionsMenu(track);
+            this._applyFilterToTrack(track);
             this.notifyTracksChanged();
             return track;
         },
@@ -2100,6 +2115,52 @@ L.Control.TrackList = L.Control.extend({
                 this.tracks().forEach((track) => {
                     track.visible(track === clickedTrack);
                 });
+            }
+            return true;
+        },
+
+        resetFilters: function() {
+            this.nameFilter('');
+        },
+
+        _applyFilters: function() {
+            if (this._applyingFilters) {
+                return;
+            }
+            this._applyingFilters = true;
+            try {
+                this.tracks().forEach((track) => this._applyFilterToTrack(track));
+            } finally {
+                this._applyingFilters = false;
+            }
+        },
+
+        _applyFilterToTrack: function(track) {
+            if (!this.nameFilter) {
+                return;
+            }
+            const filterValue = (this.nameFilter() || '').trim().toLowerCase();
+            const trackName = (track.name() || '').toLowerCase();
+            const filteredOut = Boolean(filterValue) && !trackName.includes(filterValue);
+            if (track.hiddenByFilter() !== filteredOut) {
+                track.hiddenByFilter(filteredOut);
+            }
+        },
+
+        serializeState: function() {
+            const value = (this.nameFilter() || '').trim();
+            return value ? [encodeURIComponent(value)] : null;
+        },
+
+        unserializeState: function(state) {
+            if (!state || !state.length) {
+                this.nameFilter('');
+                return true;
+            }
+            try {
+                this.nameFilter(decodeURIComponent(state[0]));
+            } catch (e) {
+                return false;
             }
             return true;
         }

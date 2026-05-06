@@ -6,7 +6,6 @@ const filesWithSideEffects = [
     'src/lib/leaflet.control.azimuth/index.js',
     'src/lib/leaflet.control.caption/index.js',
     'src/lib/leaflet.control.coordinates/index.js',
-    'src/lib/leaflet.control.filters/control.js',
     'src/lib/leaflet.control.jnx/hash-state.js',
     'src/lib/leaflet.control.jnx/index.js',
     'src/lib/leaflet.control.layers.configure/customLayer.js',

@@ -288,6 +288,37 @@
     color: #bbbbbb;
 }
 
+.leaflet-control-tracklist .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.leaflet-control-tracklist .filter-input {
+    flex: 1;
+    min-width: 0;
+    height: 20px;
+    padding: 0 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 11px;
+    box-sizing: border-box;
+}
+
+.leaflet-control-tracklist .filter-reset {
+    cursor: pointer;
+    color: #999;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 4px;
+    user-select: none;
+}
+
+.leaflet-control-tracklist .filter-reset:hover {
+    color: #333;
+}
+
 .tracks-show-hide-all-wrapper {
     margin-top: 3px;
     display: inline-block;
