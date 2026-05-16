@@ -7,3 +7,4 @@ _trash
 build_cache
 /.vs
 yarn.lock
+.claude/settings.local.json
