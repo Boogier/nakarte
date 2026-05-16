@@ -228,6 +228,7 @@ function setUp() { // eslint-disable-line complexity
     /* controls bottom-right corner */
 
     tracklist.addTo(map);
+    const hasInitialNameFilter = hashState.hasKey('nf');
     tracklist.enableHashState('nf');
 
     const tracksHashParams = tracklist.hashParams();
@@ -264,6 +265,9 @@ function setUp() { // eslint-disable-line complexity
     }
 
     reloadBalkanTracksLatestOnly();
+    if (hasInitialNameFilter) {
+        tracklist.showTooltipForFilteredTrack();
+    }
     const handleBoundsChanged = debounce(() => {
         reloadBalkanTracksLatestOnly();
     }, 500);

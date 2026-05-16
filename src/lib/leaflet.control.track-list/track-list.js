@@ -175,10 +175,14 @@ L.Control.TrackList = L.Control.extend({
             this.isPlacingPoint = false;
             this.trackAddingPoint = ko.observable(null);
             this.trackAddingSegment = ko.observable(null);
+            this._defaultPageTitle = document.title;
             this.nameFilter = ko.observable('');
-            this.nameFilter.subscribe(() => {
+            this.nameFilter.subscribe((value) => {
                 this._applyFilters();
                 this.fire('filterchange');
+                if (!(value || '').trim()) {
+                    document.title = this._defaultPageTitle;
+                }
             });
         },
 
@@ -1363,6 +1367,34 @@ L.Control.TrackList = L.Control.extend({
                     }
                 }
             }, 0);
+        },
+
+        showTooltipForFilteredTrack: function() {
+            this.whenLoadDone(() => {
+                const filterValue = (this.nameFilter() || '').trim().toLowerCase();
+                if (!filterValue) {
+                    return;
+                }
+                const matches = this.tracks().filter((track) => {
+                    if (!track.visible() || !track.externalId()) {
+                        return false;
+                    }
+                    return (track.name() || '').toLowerCase().includes(filterValue);
+                });
+                if (matches.length !== 1) {
+                    return;
+                }
+                document.title = `Run-Balkan: ${matches[0].name()}`;
+                const polyline = this.getTrackPolylines(matches[0])[0];
+                if (!polyline) {
+                    return;
+                }
+                const bounds = polyline.getBounds();
+                if (!bounds || !bounds.isValid()) {
+                    return;
+                }
+                this.bindTooltip(polyline, bounds.getWest());
+            });
         },
 
         onTrackMouseEnter: function(polyline) {
